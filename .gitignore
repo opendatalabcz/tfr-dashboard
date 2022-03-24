@@ -1,0 +1,8 @@
+# Sensitive data
+.env
+
+# Temporary files
+**/__pycache__
+
+# Editor
+tfr-dashboard.code-workspace
