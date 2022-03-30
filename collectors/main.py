@@ -9,3 +9,8 @@ if not 'EXCLUDE_DATAGOVCZ' in os.environ:
     import src.datagovcz
 else:
     print('Skipping data.gov.cz')
+
+if not 'EXCLUDE_GOOGLETRENDS' in os.environ:
+    import src.googletrends
+else:
+    print('Skipping Google Trends')
