@@ -3,7 +3,8 @@ import psycopg2
 
 class Connection:
     """PostgreSQL connection wrapper providing utility methods for data collectors
-    Use a separate connection for each data source
+    
+    Use a separate instance for each data source
     """
 
     conn = None
@@ -61,7 +62,6 @@ class Connection:
             self.cur.execute('''INSERT INTO dataset (id, datasource, region, name, description, url, unit)
                 VALUES (\'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\', \'%s\')'''
                 % (id, self.data_source, region, name, description, url, unit))
-            # TODO: Create time series table
         else:
             # Update
             self.cur.execute('''UPDATE dataset SET name = \'%s\', description = \'%s\', url = \'%s\', unit = \'%s\'
@@ -99,6 +99,12 @@ class Connection:
 
         # Mark dataset as updated
         self.update_dataset(id)
+
+    def add_dataset(self, dataset, region, name, description, url, unit, data):
+        """Shorthand for calling add_dataset_record and add_dataset_data at once"""
+
+        self.add_dataset_record(dataset, region, name, description, url, unit)
+        self.add_dataset_data(dataset, region, data)
 
     def update_dataset(self, id):
         """Mark dataset as updated by setting the last_updated column to now"""
@@ -139,7 +145,7 @@ class Connection:
         """Construct a dataset id from given parameters"""
         return '%s_%s_%s' % (self.data_source, region, dataset)
 
-"""Region ids and names"""
+# Region ids and names
 regions = {
     'wld': 'Celý svět',
     'euu': 'Evropská unie',
