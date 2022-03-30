@@ -1,11 +1,11 @@
-import os
 import datetime
 
-import pandas as pd
 import numpy as np
 import world_bank_data as wb
 
 import lib.db as db
+
+print('Collecting World Bank')
 
 data_source = 'world_bank'
 
@@ -57,8 +57,8 @@ regions = [
 conn = db.Connection(data_source)
 conn.add_data_source(
     name='World Bank',
-    description='description',
-    url='TBA')
+    description='Otevřená data World Bank',
+    url='https://data.worldbank.org/')
 
 # Collect data since 1980 until now
 year = datetime.date.today().strftime("%Y")
@@ -72,39 +72,40 @@ for dataset in datasets:
         print('- %s' % region)
         data = series[region]
 
-        # Remove trailing years with missing values
+        # Remove leading and trailing years with missing values
         years = data.index
-        i = len(years) - 1
-        was_null = False
-        while(i >= 0):
-            if np.isnan(data[years[i]]):
-                was_null = True
-            else:
-                if was_null == True:
-                    break
-            i = i - 1
-        data = data.iloc[:(i + 1)] # Last index is exclusive
 
-        # Compute intermediary missing values using interpolation 
+        start = 0
+        while start <= len(years) - 1:
+            if not np.isnan(data[years[start]]):
+                break
+            start = start + 1
+
+        end = len(years) - 1
+        while end >= 0:
+            if not np.isnan(data[years[end]]):
+                break
+            end = end - 1
+        data = data.iloc[start:(end + 1)] # Last index is exclusive
+
+        # Compute intermediary missing values using interpolation
         data = data.interpolate()
 
         # Save data
-        
-        # Add data set entry
         props = datasets[dataset]
-        conn.add_dataset_record(
-            dataset=props['id'],
-            region=region.lower(),
-            name=props['name'],
-            description=props['description'],
-            url=props['url'],
-            unit=props['unit'])
 
-        # Save time series
         rows = []
         for row in data.iteritems():
             rows.append(row)
-        conn.add_dataset_data(
-            dataset=props['id'],
-            region=region.lower(),
-            data=rows)
+
+        if len(rows) != 0:
+            conn.add_dataset(
+                dataset=props['id'],
+                region=region.lower(),
+                name=props['name'],
+                description=props['description'],
+                url=props['url'],
+                unit=props['unit'],
+                data=rows)
+        else:
+            print('  No data')
