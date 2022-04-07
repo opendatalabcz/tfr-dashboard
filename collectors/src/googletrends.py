@@ -11,52 +11,52 @@ data_source = 'google_trends'
 base_url = 'https://trends.google.com/trends/explore?date=all&geo=%s&q=%s'
 
 # Datasets to collect along with their metadata
-datasets = { 
-    # '/m/01cnz': {
-    #     'id': 'birth_control',
-    #     'name': 'Antikoncepce - Téma',
-    #     'description': 'Birth control - Topic'
-    # },
-    # '/m/0fw7r': {
-    #     'id': 'ivf',
-    #     'name': 'Umělé oplodnění - Téma',
-    #     'description': 'IVF - Topic'
-    # },
-    # '/m/0g54wr7': {
-    #     'id': 'abortion',
-    #     'name': 'Potrat - Téma',
-    #     'description': 'Abortion - Topic'
-    # },
-    # '/m/01t751': {
-    #     'id': 'pregnancy_test',
-    #     'name': 'Těhotenský test - Téma',
-    #     'description': 'Pregnancy test - Topic'
-    # },
-    # '/m/05vqh7': {
-    #     'id': 'pregnancy',
-    #     'name': 'Těhotenství - Téma',
-    #     'description': 'Pregnancy - Topic'
-    # },
-    # '/m/0lc0w': {
-    #     'id': 'childbirth',
-    #     'name': 'Porod - Téma',
-    #     'description': 'Childbirth - Topic'
-    # },
-    # '/m/0jnvp': {
-    #     'id': 'infant',
-    #     'name': 'Kojenec - Téma',
-    #     'description': 'Infant - Topic'
-    # },
-    # '/m/05_5p_d': {
-    #     'id': 'maternity_hospital',
-    #     'name': 'Porodnice - Téma',
-    #     'description': 'Maternity hospital - Topic'
-    # },
-    # '/m/04fb_1': {
-    #     'id': 'babysitting',
-    #     'name': 'Hlídání dětí - Téma',
-    #     'description': 'Babysitting - Topic',
-    # },
+datasets = {
+    '/m/01cnz': {
+        'id': 'birth_control',
+        'name': 'Antikoncepce - Téma',
+        'description': 'Birth control - Topic'
+    },
+    '/m/0fw7r': {
+        'id': 'ivf',
+        'name': 'Umělé oplodnění - Téma',
+        'description': 'IVF - Topic'
+    },
+    '/m/0g54wr7': {
+        'id': 'abortion',
+        'name': 'Potrat - Téma',
+        'description': 'Abortion - Topic'
+    },
+    '/m/01t751': {
+        'id': 'pregnancy_test',
+        'name': 'Těhotenský test - Téma',
+        'description': 'Pregnancy test - Topic'
+    },
+    '/m/05vqh7': {
+        'id': 'pregnancy',
+        'name': 'Těhotenství - Téma',
+        'description': 'Pregnancy - Topic'
+    },
+    '/m/0lc0w': {
+        'id': 'childbirth',
+        'name': 'Porod - Téma',
+        'description': 'Childbirth - Topic'
+    },
+    '/m/0jnvp': {
+        'id': 'infant',
+        'name': 'Kojenec - Téma',
+        'description': 'Infant - Topic'
+    },
+    '/m/05_5p_d': {
+        'id': 'maternity_hospital',
+        'name': 'Porodnice - Téma',
+        'description': 'Maternity hospital - Topic'
+    },
+    '/m/04fb_1': {
+        'id': 'babysitting',
+        'name': 'Hlídání dětí - Téma',
+        'description': 'Babysitting - Topic',
+    },
     '/m/0218w_': {
         'id': 'child_benefit',
         'name': 'Rodičovský příspěvek - Téma',
@@ -71,6 +71,16 @@ datasets = {
         'id': 'parental_leave',
         'name': 'Rodičovská dovolená - Téma',
         'description': 'Parental leave - Topic'
+    },
+    '/g/12233csl': {
+        'id': 'stroller',
+        'name': 'Kočárek - Téma',
+        'description': 'Stroller - Topic'
+    },
+    '/m/01fqc_': {
+        'id': 'baby_bottle',
+        'name': 'Kojenecká láhev - Téma',
+        'description': 'Baby bottle - Topic'
     },
     '/m/04ztj': {
         'id': 'marriage',
