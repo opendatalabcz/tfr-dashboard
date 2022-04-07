@@ -4,6 +4,7 @@ import numpy as np
 import world_bank_data as wb
 
 import lib.db as db
+import lib.utils as utils
 
 print('Collecting World Bank')
 
@@ -163,21 +164,7 @@ for dataset in datasets:
         print('- %s' % region)
         data = series[region]
 
-        # Remove leading and trailing years with missing values
-        years = data.index
-
-        start = 0
-        while start <= len(years) - 1:
-            if not np.isnan(data[years[start]]):
-                break
-            start = start + 1
-
-        end = len(years) - 1
-        while end >= 0:
-            if not np.isnan(data[years[end]]):
-                break
-            end = end - 1
-        data = data.iloc[start:(end + 1)] # Last index is exclusive
+        data = utils.strip_nans(data)
 
         # Compute intermediary missing values using interpolation
         data = data.interpolate()
@@ -189,7 +176,7 @@ for dataset in datasets:
         for row in data.iteritems():
             rows.append(row)
 
-        if len(rows) != 0:
+        if len(rows) >= 2:
             conn.add_dataset(
                 dataset=props['id'],
                 region=region.lower(),
@@ -199,4 +186,4 @@ for dataset in datasets:
                 unit=props['unit'],
                 data=rows)
         else:
-            print('  No data')
+            print('  Not enough data')
