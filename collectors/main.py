@@ -5,6 +5,11 @@ if not 'EXCLUDE_WORLDBANK' in os.environ:
 else:
     print('Skipping World Bank')
 
+if not 'EXCLUDE_EUROSTAT' in os.environ:
+    import src.eurostat
+else:
+    print('Skipping Eurostat')
+
 if not 'EXCLUDE_DATAGOVCZ' in os.environ:
     import src.datagovcz
 else:
