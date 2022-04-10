@@ -175,5 +175,7 @@ regions = {
     'svk': 'Slovensko',
     'svn': 'Slovinsko',
     'esp': 'Španělsko',
-    'swe': 'Švédsko'
+    'swe': 'Švédsko',
+    'nor': 'Norsko',
+    'gbr': 'Velká Británie'
 }
