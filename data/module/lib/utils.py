@@ -1,3 +1,5 @@
+"""Utility functions module"""
+
 import pandas as pd
 
 def strip_nans(data):
@@ -16,5 +18,5 @@ def strip_nans(data):
         if not pd.isnull(data[index[end]]):
             break
         end = end - 1
-    
+
     return data.iloc[start:(end + 1)] # Last index is exclusive

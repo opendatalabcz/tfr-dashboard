@@ -8,8 +8,8 @@ RUN apt-get update \
 COPY requirements.txt app/requirements.txt
 RUN pip install --no-cache-dir -r app/requirements.txt
 
-COPY src app/src
-COPY lib app/lib
-COPY main.py app/main.py
+COPY module /app/module
 
-CMD [ "python3", "app/main.py"]
+WORKDIR /app/module
+
+CMD [ "python3", "main.py"]

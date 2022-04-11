@@ -1,16 +1,16 @@
+"""Google Trends data source collector"""
+
 import time
 
 import pandas as pd
 from pytrends.request import TrendReq
 
-import lib.db as db
+from lib.storage import Storage, DataSource, Dataset, TimeSeries
 
-print('Collecting Google Trends')
+BASE_URL = 'https://trends.google.com/trends/explore?date=all&q=%s'
+UNIT = 'frekvence vyhledávání'
 
-data_source = 'google_trends'
-base_url = 'https://trends.google.com/trends/explore?date=all&geo=%s&q=%s'
-
-# Datasets to collect along with their metadata
+# Datasets to fetch along with their metadata
 datasets = {
     '/m/01cnz': {
         'id': 'birth_control',
@@ -113,9 +113,8 @@ datasets = {
         'description': 'Stress - Topic'
     }
 }
-dataset_unit = 'frekvence vyhledávání'
 
-# Regions to collect the datasets for
+# Regions to fetch the datasets for
 # Google Trends codes along with DB codes
 europe = {
     'AT': 'aut',
@@ -147,105 +146,96 @@ europe = {
     'SE': 'swe',
 }
 
-# Add data source record
-conn = db.Connection(data_source)
-conn.add_data_source(
-    name='Google Trends',
-    description='Historie vyhledávání na Google',
-    url='https://trends.google.com/')
+other_regions = {
+    '': 'wld', # Empty region parameter means whole world
+    'NO': 'nor',
+    'UK': 'gbr'
+}
 
-def collect(term, region, timeframe='all'):
+pytrends = TrendReq(hl='en-US', tz=0)
+
+def fetch(term, region, timeframe='all'):
     """Fetch data for a term, return yearly mean values"""
 
     # Fetch monthly data
     pytrends.build_payload([term], timeframe=timeframe, geo=region)
-    df = pytrends.interest_over_time().drop(columns="isPartial")
-    
+    data = pytrends.interest_over_time().drop(columns="isPartial")
+
     # Convert to yearly values as mean of months
-    df.reset_index(level=0, inplace=True)
-    df.date = df.date.astype('string')
-    df = pd.concat([
-        df.date.str[0:4],
-        df[term]
+    data.reset_index(level=0, inplace=True)
+    data.date = data.date.astype('string')
+    data = pd.concat([
+        data.date.str[0:4],
+        data[term]
         ], axis=1)
-    df.rename(columns = {term: 'value'}, inplace=True)
-    df.set_index('date', inplace=True)
-    return df.groupby(['date'])['value'].mean()
+    data.rename(columns = {term: 'value'}, inplace=True)
+    data.set_index('date', inplace=True)
+    return data.groupby(['date'])['value'].mean()
 
-def data_to_tuples(data):
-    """Convert data from Series to a list of tuples (year, value)"""
+def collect(storage: Storage):
+    """Collect data from the data source"""
 
-    rows = []
-    for row in data.iteritems():
-        rows.append(row)
-    return rows
+    data_source = DataSource(
+        'google_trends',
+        'Google Trends',
+        'Historie vyhledávání na Google',
+        'https://trends.google.com/')
 
-pytrends = TrendReq(hl='en-US', tz=0)
 
-# Process European Union countries
+    for term, props in datasets.items():
+        print('  - ' + props['name'])
 
-for term in datasets:
-    print('Fetching dataset %s' % datasets[term]['name'])
-    europe_data = pd.Series(dtype='float64')
-  
-    for country in europe:
-        print('- %s' % country)
-        data = collect(term=term, region=country)
-        europe_data = pd.concat([europe_data, data])
+        dataset = Dataset(
+            props['id'],
+            data_source,
+            props['name'],
+            props['description'],
+            BASE_URL % term,
+            UNIT)
+
+        # Process European Union countries
+        europe_data = pd.Series(dtype='float64')
+        for country, region_id in europe.items():
+            data = fetch(term=term, region=country)
+            europe_data = pd.concat([europe_data, data])
+
+            # Save data
+            dataset.add_time_series(TimeSeries(
+                data_source,
+                dataset,
+                storage.regions[region_id],
+                data
+            ))
+
+            # Avoid rate limiting
+            time.sleep(1)
+
+        # Create a European mean
+        europe_data = europe_data.groupby(level=0).mean()
 
         # Save data
-        props = datasets[term]
+        dataset.add_time_series(TimeSeries(
+            data_source,
+            dataset,
+            storage.regions['euu'],
+            data
+        ))
 
-        rows = data_to_tuples(data)
+        # Collect data for other regions
+        for region, region_id in other_regions.items():
+            data = fetch(term=term, region=region)
 
-        conn.add_dataset(
-            dataset=props['id'],
-            region=europe[country],
-            name=props['name'],
-            description=props['description'],
-            url=base_url % (country, term),
-            unit=dataset_unit,
-            data=rows)
-        
-        # Avoid rate limiting
-        time.sleep(1)
+            # Save data
+            dataset.add_time_series(TimeSeries(
+                data_source,
+                dataset,
+                storage.regions[region_id],
+                data
+            ))
 
-    # Create a European mean
-    print('- EUU')
-    europe_data = europe_data.groupby(level=0).mean()
+            # Avoid rate limiting
+            time.sleep(1)
 
-    # Save data
-    props = datasets[term]
+        data_source.add_dataset(dataset)
 
-    rows = data_to_tuples(data)
-
-    conn.add_dataset(
-        dataset=props['id'],
-        region='euu',
-        name=props['name'],
-        description=props['description'],
-        url=base_url % ('', term),
-        unit=dataset_unit,
-        data=rows)
-    
-    # Collect worldwide data
-    print('- WLD')
-    data = collect(term=term, region='')
-
-    # Save data
-    props = datasets[term]
-
-    rows = data_to_tuples(data)
-
-    conn.add_dataset(
-        dataset=props['id'],
-        region='wld',
-        name=props['name'],
-        description=props['description'],
-        url=base_url % ('', term),
-        unit=dataset_unit,
-        data=rows)
-
-    # Avoid rate limiting
-    print('Sleeping for 15 seconds', flush=True)
-    time.sleep(15)
+    storage.add_data_source(data_source)

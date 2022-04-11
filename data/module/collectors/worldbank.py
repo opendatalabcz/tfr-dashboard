@@ -1,16 +1,13 @@
+"""World Bank data source collector"""
+
 import datetime
 
-import numpy as np
 import world_bank_data as wb
 
-import lib.db as db
-import lib.utils as utils
+from lib import utils
+from lib.storage import Storage, DataSource, Dataset, TimeSeries
 
-print('Collecting World Bank')
-
-data_source = 'world_bank'
-
-link = 'https://databank.worldbank.org/reports.aspx?source=2&series=%s'
+LINK = 'https://databank.worldbank.org/reports.aspx?source=2&series=%s'
 
 # Datasets to collect along with their metadata
 datasets = {
@@ -133,45 +130,52 @@ regions = [
     'SWE'
 ]
 
-# Add data source record
-conn = db.Connection(data_source)
-conn.add_data_source(
-    name='World Bank',
-    description='Otevřená data World Bank',
-    url='https://data.worldbank.org/')
+def collect(storage: Storage):
+    """Collect data from the data source"""
 
-# Collect data since 1980 until now
-year = datetime.date.today().strftime("%Y")
-for dataset in datasets:
-    print('Fetching dataset %s' % dataset)
+    data_source = DataSource(
+        'world_bank',
+        'World Bank',
+        'Otevřená data World Bank',
+        'https://data.worldbank.org/')
 
-    series = wb.get_series(dataset, date='1980:%s' % year, id_or_value='id', simplify_index=True)
+    # Collect data since 1980 until now
+    year = datetime.date.today().strftime("%Y")
+    for dataset_id, props in datasets.items():
+        print('  - ' + dataset_id)
 
-    # Process dataset for each selected region
-    for region in regions:
-        print('- %s' % region)
-        data = series[region]
+        dataset = Dataset(
+            props['id'],
+            data_source,
+            props['name'],
+            props['description'],
+            LINK % dataset_id,
+            props['unit'])
 
-        data = utils.strip_nans(data)
+        series = wb.get_series(
+            dataset_id,
+            date=f'1980:{year}',
+            id_or_value='id',
+            simplify_index=True)
 
-        # Compute intermediary missing values using interpolation
-        data = data.interpolate()
+        # Process dataset_id for each selected region
+        for region in regions:
+            data = series[region]
 
-        # Save data
-        props = datasets[dataset]
+            data = utils.strip_nans(data)
 
-        rows = []
-        for row in data.iteritems():
-            rows.append(row)
+            # Compute intermediary missing values using interpolation
+            data = data.interpolate()
 
-        if len(rows) >= 2:
-            conn.add_dataset(
-                dataset=props['id'],
-                region=region.lower(),
-                name=props['name'],
-                description=props['description'],
-                url=link % dataset,
-                unit=props['unit'],
-                data=rows)
-        else:
-            print('  Not enough data')
+            # Save data
+            time_series = TimeSeries(
+                data_source,
+                dataset,
+                storage.regions[region.lower()],
+                data)
+
+            dataset.add_time_series(time_series)
+
+        data_source.add_dataset(dataset)
+
+    storage.add_data_source(data_source)

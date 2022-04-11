@@ -1,22 +1,16 @@
+"""Eurostat data source collector"""
+
 import pandas as pd
 import numpy as np
 
-import lib.db as db
-import lib.utils as utils
-
-print('Eurostat')
-
-conn = db.Connection('eurostat')
-conn.add_data_source(
-    name='Eurostat',
-    description='Statistický úřad Evropské unie',
-    url='https://ec.europa.eu/eurostat')
+from lib import utils
+from lib.storage import Storage, DataSource, Dataset, TimeSeries
 
 # Human-usable URL to put into eurostat_id metadata
-link = 'https://ec.europa.eu/eurostat/databrowser/view/%s/default/table'
+LINK = 'https://ec.europa.eu/eurostat/databrowser/view/%s/default/table'
 
 # API to fetch the datasets from
-api = 'https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/%s?format=TSV'
+API = 'https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/%s?format=TSV'
 
 # Regions to collect the datasets for
 # Eurostat country codes along with DB codes
@@ -180,68 +174,74 @@ datasets = {
     ]
 }
 
-for eurostat_id in datasets:
-    print('- %s' % eurostat_id)
+def collect(storage: Storage):
+    """Collect data from the data source"""
 
-    data = pd.read_csv(api % eurostat_id, sep='\t')
+    data_source = DataSource(
+        'eurostat',
+        'Eurostat',
+        'Statistický úřad Evropské unie',
+        'https://ec.europa.eu/eurostat')
 
-    # Prepare data for filtering
+    for dataset_id, subsets in datasets.items():
+        data = pd.read_csv(API % dataset_id, sep='\t')
 
-    # Split leading column into separate columns
-    leading_col = data.columns[0]
-    leading_cols = data.columns[0].split(sep='\\')[0].split(sep=',')
-    data[leading_cols] = pd.DataFrame(data[leading_col].apply(lambda x: x.split(sep=',')).to_list(), index=data.index)
-    data.drop(leading_col, axis=1, inplace=True)
+        # Prepare data for filtering
 
-    # Replace ':' followed by optional flags with NaN
-    data.replace(regex=':.*', value=np.NaN, inplace=True)
+        # Split leading column into separate columns
+        leading_col = data.columns[0]
+        leading_cols = data.columns[0].split(sep='\\')[0].split(sep=',')
+        data[leading_cols] = pd.DataFrame(data[leading_col].apply(lambda x: x.split(sep=',')).to_list(), index=data.index)
+        data.drop(leading_col, axis=1, inplace=True)
 
-    # Strip trailing whitespace from column names
-    data.rename(mapper=lambda x: x.strip(), axis=1, inplace=True)
+        # Replace ':' followed by optional flags with NaN
+        data.replace(regex=':.*', value=np.NaN, inplace=True)
 
-    # print(data.head(10))
+        # Strip trailing whitespace from column names
+        data.rename(mapper=lambda x: x.strip(), axis=1, inplace=True)
 
-    # Filter out datasets
-    for dataset in datasets[eurostat_id]:
-        print('  ' + dataset['name'])
-        
-        filtered_data = pd.DataFrame(data)
-        for filter_by in dataset['filter']:
-            filtered_data = filtered_data[data[filter_by] == dataset['filter'][filter_by]]
-        
-        # Extract per-country data
-        for region in regions:
-            print('  - ' + region)
+        # Filter out datasets
+        for props in subsets:
+            print('  - ' + props['name'])
 
-            region_data = filtered_data[data['geo'] == region]
+            filtered_data = pd.DataFrame(data)
+            for filter_by in props['filter']:
+                filtered_data = filtered_data[data[filter_by] == props['filter'][filter_by]]
 
-            if region_data.size == 0:
-                continue
-            
-            # Create Series without the values used for filtering
-            region_data = region_data.transpose()
-            region_data.drop(index=leading_cols, inplace=True)
-            region_data = region_data[region_data.columns[0]].squeeze()
+            # Extract per-country data
+            for region, region_id in regions.items():
+                region_data = filtered_data[data['geo'] == region]
 
-            # Strip flags and trailing spaces from the values
-            region_data = region_data.apply(lambda x: str(x).split(sep=' ')[0]).astype(np.float64)
+                if region_data.size == 0:
+                    continue
 
-            # Strip leading and trailing NaNs and interpolate intermediary missing values
-            region_data = utils.strip_nans(region_data)
-            region_data = region_data.interpolate()
+                # Create Series without the values used for filtering
+                region_data = region_data.transpose()
+                region_data.drop(index=leading_cols, inplace=True)
+                region_data = region_data[region_data.columns[0]].squeeze()
 
-            rows = []
-            for row in region_data.iteritems():
-                rows.append(row)
+                # Strip flags and trailing spaces from the values
+                region_data = region_data.apply(lambda x: str(x).split(' ', maxsplit=1)[0]).astype(np.float64)
 
-            if len(rows) >= 2:
-                conn.add_dataset(
-                    dataset=dataset['id'],
-                    region=regions[region],
-                    name=dataset['name'],
-                    description=dataset['description'],
-                    url=link % eurostat_id,
-                    unit=dataset['unit'],
-                    data=rows)
-            else:
-                print('  Not enough data')
+                # Strip leading and trailing NaNs and interpolate intermediary missing values
+                region_data = utils.strip_nans(region_data)
+                region_data = region_data.interpolate()
+
+                # Save data
+                dataset = Dataset(
+                    props['id'],
+                    data_source,
+                    props['name'],
+                    props['description'],
+                    LINK % dataset_id,
+                    props['unit'])
+
+                dataset.add_time_series(TimeSeries(
+                    data_source,
+                    props,
+                    storage.regions[region_id],
+                    region_data))
+
+                data_source.add_dataset(dataset)
+
+    storage.add_data_source(data_source)
