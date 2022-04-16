@@ -2,8 +2,10 @@
 
 import os
 
+from lib.db import Connection
 from lib.storage import Storage, Region
 from collectors import worldbank, eurostat, datagovcz, googletrends
+from processors import intercorr, paircorr
 
 if __name__ == '__main__':
     storage = Storage()
@@ -60,7 +62,16 @@ if __name__ == '__main__':
             print('- Skipping ' + data_source_name)
 
     # Process data
-    # TODO: Implement
+    print('Processing data')
+
+    print('- Pair correlation')
+    paircorr.process(storage)
+    print('- Inter-region correlation')
+    intercorr.process(storage)
+    print('- Forecasting')
+    # TODO: Implement.
 
     # Save data
-    # TODO: Implement
+    print('Saving data')
+    connection = Connection()
+    connection.save_storage(storage)
