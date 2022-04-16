@@ -21,16 +21,39 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: correlation; Type: TABLE; Schema: public; Owner: tfr
+-- Name: data_source; Type: TABLE; Schema: public; Owner: tfr
 --
 
-CREATE TABLE public.correlation (
-    first_dataset_id character varying(128) NOT NULL,
-    second_dataset_id character varying(128) NOT NULL
+CREATE TABLE public.data_source (
+    id character varying(128) NOT NULL,
+    name text NOT NULL,
+    description text,
+    url text
 );
 
 
-ALTER TABLE public.correlation OWNER TO tfr;
+ALTER TABLE public.data_source OWNER TO tfr;
+
+--
+-- Name: COLUMN data_source.name; Type: COMMENT; Schema: public; Owner: tfr
+--
+
+COMMENT ON COLUMN public.data_source.name IS 'Data source display name';
+
+
+--
+-- Name: COLUMN data_source.description; Type: COMMENT; Schema: public; Owner: tfr
+--
+
+COMMENT ON COLUMN public.data_source.description IS 'Data source single-paragraph description';
+
+
+--
+-- Name: COLUMN data_source.url; Type: COMMENT; Schema: public; Owner: tfr
+--
+
+COMMENT ON COLUMN public.data_source.url IS 'The original URL of the data source';
+
 
 --
 -- Name: dataset; Type: TABLE; Schema: public; Owner: tfr
@@ -38,37 +61,38 @@ ALTER TABLE public.correlation OWNER TO tfr;
 
 CREATE TABLE public.dataset (
     id character varying(128) NOT NULL,
-    datasource character varying(128) NOT NULL,
-    region character varying(128) NOT NULL,
+    data_source character varying(128) NOT NULL,
     name text NOT NULL,
-    description text,
-    url text,
+    description text NOT NULL,
+    url text NOT NULL,
     unit text NOT NULL,
-    last_updated timestamp without time zone DEFAULT now() NOT NULL
+    p_values_per_year json,
+    r_values_per_year json,
+    correlation_values_per_year json
 );
 
 
 ALTER TABLE public.dataset OWNER TO tfr;
 
 --
--- Name: COLUMN dataset.datasource; Type: COMMENT; Schema: public; Owner: tfr
+-- Name: COLUMN dataset.data_source; Type: COMMENT; Schema: public; Owner: tfr
 --
 
-COMMENT ON COLUMN public.dataset.datasource IS 'Parent data source';
-
-
---
--- Name: COLUMN dataset.region; Type: COMMENT; Schema: public; Owner: tfr
---
-
-COMMENT ON COLUMN public.dataset.region IS 'Geographical region of this dataset';
+COMMENT ON COLUMN public.dataset.data_source IS 'Parent data source';
 
 
 --
--- Name: COLUMN dataset.type; Type: COMMENT; Schema: public; Owner: tfr
+-- Name: COLUMN dataset.description; Type: COMMENT; Schema: public; Owner: tfr
 --
 
 COMMENT ON COLUMN public.dataset.description IS 'Up to one paragraph about the data set';
+
+
+--
+-- Name: COLUMN dataset.url; Type: COMMENT; Schema: public; Owner: tfr
+--
+
+COMMENT ON COLUMN public.dataset.url IS 'The original URL of the data source';
 
 
 --
@@ -79,38 +103,24 @@ COMMENT ON COLUMN public.dataset.unit IS 'Unit of measurement of the data points
 
 
 --
--- Name: datasource; Type: TABLE; Schema: public; Owner: tfr
+-- Name: COLUMN dataset.p_values_per_year; Type: COMMENT; Schema: public; Owner: tfr
 --
 
-CREATE TABLE public.datasource (
-    id character varying(128) NOT NULL,
-    name text NOT NULL,
-    description text,
-    url text
-);
-
-
-ALTER TABLE public.datasource OWNER TO tfr;
-
---
--- Name: COLUMN datasource.name; Type: COMMENT; Schema: public; Owner: tfr
---
-
-COMMENT ON COLUMN public.datasource.name IS 'Data source display name';
+COMMENT ON COLUMN public.dataset.p_values_per_year IS 'p-values for inter-region correlations per year';
 
 
 --
--- Name: COLUMN datasource.description; Type: COMMENT; Schema: public; Owner: tfr
+-- Name: COLUMN dataset.r_values_per_year; Type: COMMENT; Schema: public; Owner: tfr
 --
 
-COMMENT ON COLUMN public.datasource.description IS 'Data source single-paragraph description';
+COMMENT ON COLUMN public.dataset.r_values_per_year IS 'r-values for inter-region correlations per year';
 
 
 --
--- Name: COLUMN datasource.url; Type: COMMENT; Schema: public; Owner: tfr
+-- Name: COLUMN dataset.correlation_values_per_year; Type: COMMENT; Schema: public; Owner: tfr
 --
 
-COMMENT ON COLUMN public.datasource.url IS 'The original URL of the data source';
+COMMENT ON COLUMN public.dataset.correlation_values_per_year IS 'Truth values for inter-region correlations per year';
 
 
 --
@@ -133,10 +143,37 @@ COMMENT ON TABLE public.region IS 'Geographical region';
 
 
 --
--- Data for Name: correlation; Type: TABLE DATA; Schema: public; Owner: tfr
+-- Name: time_series; Type: TABLE; Schema: public; Owner: tfr
 --
 
-COPY public.correlation (first_dataset_id, second_dataset_id) FROM stdin;
+CREATE TABLE public.time_series (
+    dataset character varying(128) NOT NULL,
+    region character varying(128) NOT NULL,
+    series json NOT NULL,
+    lag real,
+    slope real,
+    intercept real,
+    r_value real,
+    p_value real,
+    std_err real,
+    correlation boolean
+);
+
+
+ALTER TABLE public.time_series OWNER TO tfr;
+
+--
+-- Name: COLUMN time_series.series; Type: COMMENT; Schema: public; Owner: tfr
+--
+
+COMMENT ON COLUMN public.time_series.series IS 'Values of the dataset in a given region per year';
+
+
+--
+-- Data for Name: data_source; Type: TABLE DATA; Schema: public; Owner: tfr
+--
+
+COPY public.data_source (id, name, description, url) FROM stdin;
 \.
 
 
@@ -144,15 +181,7 @@ COPY public.correlation (first_dataset_id, second_dataset_id) FROM stdin;
 -- Data for Name: dataset; Type: TABLE DATA; Schema: public; Owner: tfr
 --
 
-COPY public.dataset (datasource, region, id, name, description, url, unit, last_updated) FROM stdin;
-\.
-
-
---
--- Data for Name: datasource; Type: TABLE DATA; Schema: public; Owner: tfr
---
-
-COPY public.datasource (id, name, description, url) FROM stdin;
+COPY public.dataset (id, data_source, name, description, url, unit, p_values_per_year, r_values_per_year, correlation_values_per_year) FROM stdin;
 \.
 
 
@@ -165,19 +194,27 @@ COPY public.region (id, name) FROM stdin;
 
 
 --
+-- Data for Name: time_series; Type: TABLE DATA; Schema: public; Owner: tfr
+--
+
+COPY public.time_series (dataset, region, series, lag, slope, intercept, r_value, p_value, std_err) FROM stdin;
+\.
+
+
+--
+-- Name: data_source data_source_pkey; Type: CONSTRAINT; Schema: public; Owner: tfr
+--
+
+ALTER TABLE ONLY public.data_source
+    ADD CONSTRAINT data_source_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: dataset dataset_pkey; Type: CONSTRAINT; Schema: public; Owner: tfr
 --
 
 ALTER TABLE ONLY public.dataset
     ADD CONSTRAINT dataset_pkey PRIMARY KEY (id);
-
-
---
--- Name: datasource datasource_pkey; Type: CONSTRAINT; Schema: public; Owner: tfr
---
-
-ALTER TABLE ONLY public.datasource
-    ADD CONSTRAINT datasource_pkey PRIMARY KEY (id);
 
 
 --
@@ -189,63 +226,63 @@ ALTER TABLE ONLY public.region
 
 
 --
--- Name: fki_datasource_fkey; Type: INDEX; Schema: public; Owner: tfr
+-- Name: time_series time_series_pkey; Type: CONSTRAINT; Schema: public; Owner: tfr
 --
 
-CREATE INDEX fki_datasource_fkey ON public.dataset USING btree (datasource);
+ALTER TABLE ONLY public.time_series
+    ADD CONSTRAINT time_series_pkey PRIMARY KEY (dataset, region);
 
 
 --
--- Name: fki_first_dataset_fkey; Type: INDEX; Schema: public; Owner: tfr
+-- Name: fki_data_source_fkey; Type: INDEX; Schema: public; Owner: tfr
 --
 
-CREATE INDEX fki_first_dataset_fkey ON public.correlation USING btree (first_dataset_id);
+CREATE INDEX fki_data_source_fkey ON public.dataset USING btree (data_source);
+
+
+--
+-- Name: fki_dataset_fkey; Type: INDEX; Schema: public; Owner: tfr
+--
+
+CREATE INDEX fki_dataset_fkey ON public.time_series USING btree (dataset);
 
 
 --
 -- Name: fki_region_fkey; Type: INDEX; Schema: public; Owner: tfr
 --
 
-CREATE INDEX fki_region_fkey ON public.dataset USING btree (region);
+CREATE INDEX fki_region_fkey ON public.time_series USING btree (region);
 
 
 --
--- Name: fki_second_dataset_fkey; Type: INDEX; Schema: public; Owner: tfr
---
-
-CREATE INDEX fki_second_dataset_fkey ON public.correlation USING btree (second_dataset_id);
-
-
---
--- Name: dataset datasource_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tfr
+-- Name: dataset data_source_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tfr
 --
 
 ALTER TABLE ONLY public.dataset
-    ADD CONSTRAINT datasource_fkey FOREIGN KEY (datasource) REFERENCES public.datasource(id) NOT VALID;
+    ADD CONSTRAINT data_source_fkey FOREIGN KEY (data_source) REFERENCES public.data_source(id) NOT VALID;
 
 
 --
--- Name: correlation first_dataset_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tfr
+-- Name: time_series dataset_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tfr
 --
 
-ALTER TABLE ONLY public.correlation
-    ADD CONSTRAINT first_dataset_fkey FOREIGN KEY (first_dataset_id) REFERENCES public.dataset(id) NOT VALID;
+ALTER TABLE ONLY public.time_series
+    ADD CONSTRAINT dataset_fkey FOREIGN KEY (dataset) REFERENCES public.dataset(id) NOT VALID;
 
 
 --
--- Name: dataset region_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tfr
+-- Name: time_series region_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tfr
 --
 
-ALTER TABLE ONLY public.dataset
+ALTER TABLE ONLY public.time_series
     ADD CONSTRAINT region_fkey FOREIGN KEY (region) REFERENCES public.region(id) NOT VALID;
 
 
 --
--- Name: correlation second_dataset_fkey; Type: FK CONSTRAINT; Schema: public; Owner: tfr
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: tfr
 --
 
-ALTER TABLE ONLY public.correlation
-    ADD CONSTRAINT second_dataset_fkey FOREIGN KEY (second_dataset_id) REFERENCES public.dataset(id) NOT VALID;
+GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
