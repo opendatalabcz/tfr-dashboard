@@ -149,7 +149,7 @@ europe = {
 other_regions = {
     '': 'wld', # Empty region parameter means whole world
     'NO': 'nor',
-    'UK': 'gbr'
+    'GB': 'gbr'
 }
 
 pytrends = TrendReq(hl='en-US', tz=0)
@@ -159,7 +159,13 @@ def fetch(term, region, timeframe='all'):
 
     # Fetch monthly data
     pytrends.build_payload([term], timeframe=timeframe, geo=region)
-    data = pytrends.interest_over_time().drop(columns="isPartial")
+    data = pytrends.interest_over_time()
+
+    if data.empty:
+        return data
+
+    if 'isPartial' in data.columns:
+        data.drop(columns='isPartial', inplace=True)
 
     # Convert to yearly values as mean of months
     data.reset_index(level=0, inplace=True)
@@ -197,15 +203,17 @@ def collect(storage: Storage):
         europe_data = pd.Series(dtype='float64')
         for country, region_id in europe.items():
             data = fetch(term=term, region=country)
-            europe_data = pd.concat([europe_data, data])
 
-            # Save data
-            dataset.add_time_series(TimeSeries(
-                data_source,
-                dataset,
-                storage.regions[region_id],
-                data
-            ))
+            if not data.empty:
+                europe_data = pd.concat([europe_data, data])
+
+                # Save data
+                dataset.add_time_series(TimeSeries(
+                    data_source,
+                    dataset,
+                    storage.regions[region_id],
+                    data
+                ))
 
             # Avoid rate limiting
             time.sleep(1)
@@ -225,13 +233,14 @@ def collect(storage: Storage):
         for region, region_id in other_regions.items():
             data = fetch(term=term, region=region)
 
-            # Save data
-            dataset.add_time_series(TimeSeries(
-                data_source,
-                dataset,
-                storage.regions[region_id],
-                data
-            ))
+            if not data.empty:
+                # Save data
+                dataset.add_time_series(TimeSeries(
+                    data_source,
+                    dataset,
+                    storage.regions[region_id],
+                    data
+                ))
 
             # Avoid rate limiting
             time.sleep(1)
