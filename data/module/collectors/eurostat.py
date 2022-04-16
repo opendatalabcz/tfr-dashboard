@@ -208,6 +208,14 @@ def collect(storage: Storage):
             for filter_by in props['filter']:
                 filtered_data = filtered_data[data[filter_by] == props['filter'][filter_by]]
 
+            dataset = Dataset(
+                props['id'],
+                data_source,
+                props['name'],
+                props['description'],
+                LINK % dataset_id,
+                props['unit'])
+
             # Extract per-country data
             for region, region_id in regions.items():
                 region_data = filtered_data[data['geo'] == region]
@@ -221,27 +229,25 @@ def collect(storage: Storage):
                 region_data = region_data[region_data.columns[0]].squeeze()
 
                 # Strip flags and trailing spaces from the values
-                region_data = region_data.apply(lambda x: str(x).split(' ', maxsplit=1)[0]).astype(np.float64)
+                region_data = region_data \
+                    .apply(lambda x: str(x)
+                    .split(' ', maxsplit=1)[0]) \
+                    .astype(np.float64)
 
                 # Strip leading and trailing NaNs and interpolate intermediary missing values
                 region_data = utils.strip_nans(region_data)
                 region_data = region_data.interpolate()
 
+                region_data.name = props['id']
+
                 # Save data
-                dataset = Dataset(
-                    props['id'],
-                    data_source,
-                    props['name'],
-                    props['description'],
-                    LINK % dataset_id,
-                    props['unit'])
+                if region_data.size != 0:
+                    dataset.add_time_series(TimeSeries(
+                        data_source,
+                        dataset,
+                        storage.regions[region_id],
+                        region_data))
 
-                dataset.add_time_series(TimeSeries(
-                    data_source,
-                    props,
-                    storage.regions[region_id],
-                    region_data))
-
-                data_source.add_dataset(dataset)
+            data_source.add_dataset(dataset)
 
     storage.add_data_source(data_source)
