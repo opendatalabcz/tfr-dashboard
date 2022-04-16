@@ -34,6 +34,10 @@ def collect(storage: Storage):
         'pocet_duchodu': 'value'
         }, inplace = True)
 
+    index = data['year']
+    series = pd.Series(data=data['value'], name='pensions_count')
+    series.index = index # Assign index afterwards to avoid having NaN values???
+
     # Save data
     dataset = Dataset(
         'pensions_count',
@@ -43,7 +47,7 @@ def collect(storage: Storage):
         'https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2F00006963%2F4ca9223c497b1ee13011611498c3155f',
         'počet důchodů',
         )
-    dataset.add_time_series(TimeSeries(data_source, dataset, region, data))
+    dataset.add_time_series(TimeSeries(data_source, dataset, region, series))
     data_source.add_dataset(dataset)
 
     # Schools
@@ -58,6 +62,8 @@ def collect(storage: Storage):
     data = data[['rok', 'ds_kod', 'hodnota']]
 
     data = data.groupby(['rok'])['hodnota'].sum()
+
+    data.name = 'classrooms_count'
 
     # Save data
     dataset = Dataset(
@@ -76,6 +82,8 @@ def collect(storage: Storage):
 
     # Extract data
     data = data.groupby(['rok'])['hodnota'].sum()
+
+    data.name = 'apartments'
 
     # Save data
     dataset = Dataset(
@@ -96,9 +104,13 @@ def collect(storage: Storage):
         & (data['pohlavi_kod'] == 1)
         & (data['uzemi_cis'] == 97)][['rok', 'hodnota']].groupby('rok')['hodnota'].mean()
 
+    data_men.name = 'unemployment_men'
+
     data_women = data[(data['stapro_txt'] == 'Obecná míra nezaměstnanosti')
         & (data['pohlavi_kod'] == 2)
         & (data['uzemi_cis'] == 97)][['rok', 'hodnota']].groupby('rok')['hodnota'].mean()
+
+    data_women.name = 'unemployment_women'
 
     # Save data
     print('  - Unemployed men')
@@ -131,9 +143,17 @@ def collect(storage: Storage):
         & (data['uzemi_cis'] == 97)
         & (data['SPKVANTIL_cis'] == 7636)][['rok', 'hodnota']].set_index(['rok']).sort_index()
 
+    index = data_men.index
+    data_men = pd.Series(data=data_men['hodnota'], name='wages_men')
+    data_men.index = data_men.index  # Assign index afterwards to avoid having NaN values???
+
     data_women = data[(data['POHLAVI_kod'] == 2)
         & (data['uzemi_cis'] == 97)
         & (data['SPKVANTIL_cis'] == 7636)][['rok', 'hodnota']].set_index(['rok']).sort_index()
+
+    index = data_women.index
+    data_women = pd.Series(data=data_women['hodnota'], name='wages_women')
+    data_women.index = data_women.index  # Assign index afterwards to avoid having NaN values???
 
     # Save data
     print('  - Wages men')
