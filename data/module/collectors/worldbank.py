@@ -2,6 +2,7 @@
 
 import datetime
 
+import pandas as pd
 import world_bank_data as wb
 
 from lib import utils
@@ -92,7 +93,7 @@ datasets = {
     'SH.STA.SUIC.P5': {
         'id': 'suicide_mortality_rate',
         'name': 'Sebevražednost',
-        'description': 'Hrubý počet sebevražd na 100000 obyvatel (WHO)',
+        'description': 'Hrubý počet sebevražd na 100 000 obyvatel (WHO)',
         'unit': 'počet sebevražd'
     }
 }
@@ -127,7 +128,9 @@ regions = [
     'SVK',
     'SVN',
     'ESP',
-    'SWE'
+    'SWE',
+    'NOR', # Others
+    'GBR'
 ]
 
 def collect(storage: Storage):
@@ -168,14 +171,16 @@ def collect(storage: Storage):
             data = data.interpolate()
 
             # Save data
-            time_series = TimeSeries(
-                data_source,
-                dataset,
-                storage.regions[region.lower()],
-                data)
-
-            dataset.add_time_series(time_series)
+            if data.size != 0:
+                time_series = TimeSeries(
+                    data_source,
+                    dataset,
+                    storage.regions[region.lower()],
+                    # pd.Series(data=data.values.copy(), index=data.index.copy(), name=str(dataset_id)))
+                    data)
+                dataset.add_time_series(time_series)
 
         data_source.add_dataset(dataset)
 
     storage.add_data_source(data_source)
+    storage.tfr_dataset = data_source.datasets['tfr']
