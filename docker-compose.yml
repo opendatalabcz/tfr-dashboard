@@ -35,6 +35,8 @@ services:
 
   data:
     build: data
+    depends_on:
+      - postgres
     networks:
       - backend
     environment:
