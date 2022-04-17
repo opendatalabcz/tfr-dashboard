@@ -170,6 +170,13 @@ COMMENT ON COLUMN public.time_series.series IS 'Values of the dataset in a given
 
 
 --
+-- Name: COLUMN time_series.correlation; Type: COMMENT; Schema: public; Owner: tfr
+--
+
+COMMENT ON COLUMN public.time_series.correlation IS 'Whether this time series correlates with the TFR dataset';
+
+
+--
 -- Data for Name: data_source; Type: TABLE DATA; Schema: public; Owner: tfr
 --
 
@@ -197,7 +204,7 @@ COPY public.region (id, name) FROM stdin;
 -- Data for Name: time_series; Type: TABLE DATA; Schema: public; Owner: tfr
 --
 
-COPY public.time_series (dataset, region, series, lag, slope, intercept, r_value, p_value, std_err) FROM stdin;
+COPY public.time_series (dataset, region, series, lag, slope, intercept, r_value, p_value, std_err, correlation) FROM stdin;
 \.
 
 
@@ -283,6 +290,35 @@ ALTER TABLE ONLY public.time_series
 --
 
 GRANT ALL ON SCHEMA public TO PUBLIC;
+GRANT USAGE ON SCHEMA public TO web_anon;
+
+
+--
+-- Name: TABLE data_source; Type: ACL; Schema: public; Owner: tfr
+--
+
+GRANT SELECT ON TABLE public.data_source TO web_anon;
+
+
+--
+-- Name: TABLE dataset; Type: ACL; Schema: public; Owner: tfr
+--
+
+GRANT SELECT ON TABLE public.dataset TO web_anon;
+
+
+--
+-- Name: TABLE region; Type: ACL; Schema: public; Owner: tfr
+--
+
+GRANT SELECT ON TABLE public.region TO web_anon;
+
+
+--
+-- Name: TABLE time_series; Type: ACL; Schema: public; Owner: tfr
+--
+
+GRANT SELECT ON TABLE public.time_series TO web_anon;
 
 
 --
