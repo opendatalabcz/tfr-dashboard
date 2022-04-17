@@ -1,0 +1,128 @@
+{
+	"info": {
+		"_postman_id": "ab2b2b38-36b9-4bf6-84ef-b2a6e2b5efba",
+		"name": "TFR",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Data sources",
+			"item": [
+				{
+					"name": "World Bank WDI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://api.worldbank.org/v2/country/all/indicator/SP.DYN.TFRT.IN",
+							"protocol": "http",
+							"host": [
+								"api",
+								"worldbank",
+								"org"
+							],
+							"path": [
+								"v2",
+								"country",
+								"all",
+								"indicator",
+								"SP.DYN.TFRT.IN"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TFR API",
+			"item": [
+				{
+					"name": "API root",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5051",
+							"host": [
+								"localhost"
+							],
+							"port": "5051"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List datasets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5051/dataset",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"dataset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List dataset by data source",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5051/dataset?data_source=eq.datagovcz",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"dataset"
+							],
+							"query": [
+								{
+									"key": "data_source",
+									"value": "eq.datagovcz"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get time series by dataset and region",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5051/time_series?dataset=eq.tfr&region=eq.wld",
+							"host": [
+								"localhost"
+							],
+							"port": "5051",
+							"path": [
+								"time_series"
+							],
+							"query": [
+								{
+									"key": "dataset",
+									"value": "eq.tfr"
+								},
+								{
+									"key": "region",
+									"value": "eq.wld"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
