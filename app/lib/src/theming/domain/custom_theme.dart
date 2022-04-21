@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 class CustomSizes {
   // Spacing.
+  final double paddingSize;
+  final EdgeInsets padding;
+  final double halfPaddingSize;
+  final EdgeInsets halfPadding;
 
   /// Tiles.
   final Radius tileRadius;
@@ -15,6 +19,10 @@ class CustomSizes {
   final double widescreenThreshold;
 
   const CustomSizes({
+    required this.paddingSize,
+    required this.padding,
+    required this.halfPaddingSize,
+    required this.halfPadding,
     required this.tileRadius,
     required this.tileBorderRadius,
     required this.tilePadding,
@@ -64,6 +72,10 @@ class CustomThemeData {
 }
 
 const customSizes = CustomSizes(
+  paddingSize: 16.0,
+  padding: EdgeInsets.all(16.0),
+  halfPaddingSize: 8.0,
+  halfPadding: EdgeInsets.all(8.0),
   tileRadius: Radius.circular(12.0),
   tileBorderRadius: BorderRadius.all(Radius.circular(12.0)),
   tilePadding: EdgeInsets.all(16.0),
@@ -72,8 +84,8 @@ const customSizes = CustomSizes(
 
 final customLightColors = CustomColors(
   primarySwatch: Colors.blue,
-  primaryColor: Colors.blue.shade600,
-  accentColor: Colors.orange,
+  primaryColor: Colors.blue.shade700,
+  accentColor: Colors.blueAccent,
   backgroundColor: Colors.grey.shade200,
   containerColor: Colors.white,
   activeIconColor: Colors.blue,
@@ -111,5 +123,5 @@ final customDarkTheme = CustomThemeData(
 const cardTheme = CardTheme(
   color: Colors.white,
   elevation: 0,
-  margin: EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 6.0),
+  margin: EdgeInsets.all(8.0),
 );
