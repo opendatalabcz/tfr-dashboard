@@ -12,6 +12,10 @@ final regionsProvider = FutureProvider((ref) async {
   return await TfrApi.allRegions();
 });
 
+final regionProvider = FutureProvider.family((ref, String regionId) async {
+  return await TfrApi.singleRegion(regionId);
+});
+
 final regionsCountProvider = FutureProvider((ref) async {
   return await TfrApi.regionsCount();
 });
@@ -93,6 +97,11 @@ final timeSeriesProvider =
 
 final timeSeriesCountProvider = FutureProvider((ref) async {
   return await TfrApi.timeSeriesCount();
+});
+
+final timeSeriesInDatsetCountProvider =
+    FutureProvider.family((ref, String datasetId) async {
+  return await TfrApi.timeSeriesInDatasetCount(datasetId);
 });
 
 final correlationsCountProvider = FutureProvider((ref) async {

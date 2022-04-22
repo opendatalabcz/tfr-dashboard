@@ -2,6 +2,8 @@ import 'dart:math' show min;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tfr_dashboard/src/app/presentation/common.dart';
 import 'package:tfr_dashboard/src/data/application/api.dart';
 import 'package:tfr_dashboard/src/data/application/app.dart';
@@ -39,8 +41,8 @@ class DataSourcePage extends ConsumerWidget {
               bottom: 0,
             ),
         child: ListView(
-          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: CustomTheme.of(context).sizes.halfPaddingSize),
             Card(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,6 +145,22 @@ class DataSourcePage extends ConsumerWidget {
   }
 }
 
+final selectedRegionNameProvider = FutureProvider((ref) async {
+  final regionId = ref.watch(selectedRegionIdProvider);
+  return await ref.watch(regionProvider(regionId).future);
+});
+
+final timeSeriesForSelectedRegionProvider =
+    FutureProvider.family((ref, String datasetId) async {
+  final regionId = ref.watch(selectedRegionIdProvider);
+  return await ref.watch(timeSeriesProvider(
+    TimeSeriesAddress(
+      datasetId: datasetId,
+      regionId: regionId,
+    ),
+  ).future);
+});
+
 class DatasetCard extends ConsumerWidget {
   final String datasetId;
   final bool isScrollable;
@@ -156,6 +174,12 @@ class DatasetCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final datasetAsyncValue = ref.watch(datasetProvider(datasetId));
+    final timeSeriesCountAsyncValue =
+        ref.watch(timeSeriesInDatsetCountProvider(datasetId));
+    final selectedRegionAsyncValue = ref.watch(selectedRegionNameProvider);
+
+    final timeSeriesAsyncValue =
+        ref.watch(timeSeriesForSelectedRegionProvider(datasetId));
 
     final children = [
       CardTitle(
@@ -186,9 +210,12 @@ class DatasetCard extends ConsumerWidget {
           leading: Icon(Icons.link),
         ),
       ),
-      const ListTile(
-        leading: Icon(Icons.insights),
-        title: Text('Dostupné časové řady pro <počet> regionů'),
+      ListTile(
+        leading: const Icon(Icons.insights),
+        title: Text(timeSeriesCountAsyncValue.maybeWhen(
+          data: (data) => 'Dostupné časové řady pro $data regionů',
+          orElse: () => 'Jednotka',
+        )),
       ),
       ListTile(
         leading: const Icon(Icons.numbers),
@@ -196,17 +223,56 @@ class DatasetCard extends ConsumerWidget {
             data: (data) => 'Jednotka: ${data.unit}',
             orElse: () => 'Jednotka')),
       ),
-      const ListTile(
-        leading: Icon(Icons.poll),
-        title: Text('Vývoj ve zvoleném regionu'),
-        subtitle: Text('<zvolený region>'),
+      ListTile(
+        leading: const Icon(Icons.poll),
+        title: const Text('Vývoj ve zvoleném regionu'),
+        subtitle: selectedRegionAsyncValue.maybeWhen(
+            data: (data) => Text(data.name), orElse: () => null),
       ),
       // TODO: Chart for the currently selected region.
-      const SizedBox(
+      SizedBox(
         height: 300.0,
         child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Placeholder(),
+          padding: CustomTheme.of(context).sizes.padding,
+          child: timeSeriesAsyncValue.when(
+            data: (data) {
+              final sortedValues = data.series.values.toList();
+              sortedValues.sort();
+              final min = sortedValues.first;
+              final max = sortedValues.last;
+              final padding = ((max - min) / 20).roundToDouble();
+
+              return SfCartesianChart(
+                tooltipBehavior: TooltipBehavior(
+                  enable: true,
+                  decimalPlaces: 2,
+                  activationMode: ActivationMode.singleTap,
+                  animationDuration: 0,
+                  duration: 0,
+                ),
+                primaryXAxis: CategoryAxis(),
+                primaryYAxis: NumericAxis(
+                  // Round to nearest tenth and add a padding of one tenth.
+                  minimum: min.roundToDouble() - padding,
+                  maximum: max.roundToDouble() + padding,
+                  numberFormat: NumberFormat.compact(locale: 'cs_CZ'),
+                ),
+                series: <LineSeries<MapEntry<String, double>, String>>[
+                  LineSeries<MapEntry<String, double>, String>(
+                    name: '',
+                    dataSource: data.series.entries.toList(),
+                    xValueMapper: (entry, _) => entry.key,
+                    yValueMapper: (entry, _) => entry.value,
+                  ),
+                ],
+                enableAxisAnimation: true,
+              );
+            },
+            error: (_, __) => const Center(
+              child: Text('Vývoj pro zvolený region není dostupný'),
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+          ),
         ),
       ),
       ListTile(

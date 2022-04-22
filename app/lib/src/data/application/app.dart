@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provides the currently selected region's ID.
-final selectedRegionIdProvider = StateProvider<String?>((ref) {
+final selectedRegionIdProvider = StateProvider<String>((ref) {
   return 'wld';
 });
 

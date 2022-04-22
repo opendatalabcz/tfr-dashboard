@@ -48,6 +48,26 @@ class TfrApi {
     }
   }
 
+  static Future<Region> singleRegion(String regionId) async {
+    final result = _regionCache[regionId];
+    if (result != null) {
+      return result;
+    }
+    try {
+      final response = await _getResultsJson(
+        path: 'region',
+        queryParameters: {
+          'id': 'eq.$regionId',
+        },
+      );
+      final result = Region.fromMap(response[0]);
+      _regionCache.addAll({regionId: result});
+      return result;
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
   static Future<TimeSeries> singleTimeSeries(TimeSeriesAddress address) async {
     final result = _timeSeriesCache[address];
     if (result != null) {
@@ -125,6 +145,19 @@ class TfrApi {
   static Future<int> timeSeriesCount() async {
     try {
       return await _getResultsCount(path: 'time_series');
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
+  static Future<int> timeSeriesInDatasetCount(String datasetId) async {
+    try {
+      return await _getResultsCount(
+        path: 'time_series',
+        queryParameters: {
+          'dataset': 'eq.$datasetId',
+        },
+      );
     } catch (_) {
       throw const ApiResponseException();
     }
