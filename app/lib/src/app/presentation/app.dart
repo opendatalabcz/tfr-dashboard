@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tfr_dashboard/src/dashboard/dashboard.dart';
-import 'package:tfr_dashboard/src/data/presentation/data_source.dart';
+import 'package:tfr_dashboard/src/data/data.dart';
 import 'package:tfr_dashboard/src/theming/theming.dart';
+
+import 'dashboard/dashboard.dart';
 
 class TfrApp extends ConsumerWidget {
   const TfrApp({Key? key}) : super(key: key);
@@ -38,6 +39,12 @@ class TfrApp extends ConsumerWidget {
               return MaterialPageRoute(
                 builder: ((context) => DataSourcePage(
                       dataSourceId: uri.pathSegments[1],
+                    )),
+              );
+            case 'dataset':
+              return MaterialPageRoute(
+                builder: ((context) => DatasetPage(
+                      datasetId: uri.pathSegments[1],
                     )),
               );
             default:

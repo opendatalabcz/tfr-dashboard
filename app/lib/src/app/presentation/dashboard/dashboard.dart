@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tfr_dashboard/src/app/presentation/common.dart';
 
 import 'package:tfr_dashboard/src/config/config.dart';
-import 'package:tfr_dashboard/src/dashboard/presentation/data_sources.dart';
-import 'package:tfr_dashboard/src/dashboard/presentation/regions.dart';
 import 'package:tfr_dashboard/src/theming/theming.dart';
 
+import 'data_sources.dart';
 import 'numbers_strip.dart';
+import 'regions.dart';
 
 class Dashboard extends ConsumerWidget {
   static const String route = '/';
