@@ -90,52 +90,64 @@ class DashboardRegionSelector extends ConsumerWidget {
   }
 }
 
-class DashboardTfrChart extends ConsumerWidget {
+final tfrForSelectedRegionProvider = FutureProvider((ref) async {
+  final region = ref.watch(selectedRegionIdProvider);
+  final series = await ref.watch(timeSeriesProvider(
+    TimeSeriesAddress(datasetId: 'tfr', regionId: region),
+  ).future);
+  return series;
+});
+
+class DashboardTfrChart extends ConsumerStatefulWidget {
   const DashboardTfrChart({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedRegion = ref.watch(selectedRegionIdProvider);
+  ConsumerState<DashboardTfrChart> createState() => _DashboardTfrChartState();
+}
+
+class _DashboardTfrChartState extends ConsumerState<DashboardTfrChart> {
+  TimeSeries? lastValue;
+
+  @override
+  Widget build(BuildContext context) {
+    final asyncValue = ref.watch(tfrForSelectedRegionProvider);
+
+    final newValue = asyncValue.when(
+        data: ((data) => data), error: (_, __) => null, loading: () => null);
+    if (newValue != null) {
+      lastValue = newValue;
+    }
 
     final Widget chart;
-    if (selectedRegion != null) {
-      final series = ref.watch(timeSeriesProvider(
-          TimeSeriesAddress(datasetId: 'tfr', regionId: selectedRegion)));
+    if (lastValue != null) {
+      final sortedValues = lastValue!.series.values.toList();
+      sortedValues.sort();
+      final min = sortedValues.first;
+      final max = sortedValues.last;
 
-      chart = series.when(
-        data: (data) {
-          final sortedValues = data.series.values.toList();
-          sortedValues.sort();
-          final min = sortedValues.first;
-          final max = sortedValues.last;
-
-          return SfCartesianChart(
-            tooltipBehavior: TooltipBehavior(
-              enable: true,
-              decimalPlaces: 3,
-              activationMode: ActivationMode.singleTap,
-              animationDuration: 0,
-              duration: 0,
-            ),
-            primaryXAxis: CategoryAxis(),
-            primaryYAxis: NumericAxis(
-              // Round to nearest tenth and add a padding of one tenth.
-              minimum: (min * 10).roundToDouble() / 10 - 0.1,
-              maximum: (max * 10).roundToDouble() / 10 + 0.1,
-            ),
-            series: <LineSeries<MapEntry<String, double>, String>>[
-              LineSeries<MapEntry<String, double>, String>(
-                name: '',
-                dataSource: data.series.entries.toList(),
-                xValueMapper: (entry, _) => entry.key,
-                yValueMapper: (entry, _) => entry.value,
-              ),
-            ],
-            enableAxisAnimation: true,
-          );
-        },
-        error: (_, __) => Container(),
-        loading: () => Container(),
+      chart = SfCartesianChart(
+        tooltipBehavior: TooltipBehavior(
+          enable: true,
+          decimalPlaces: 2,
+          activationMode: ActivationMode.singleTap,
+          animationDuration: 0,
+          duration: 0,
+        ),
+        primaryXAxis: CategoryAxis(),
+        primaryYAxis: NumericAxis(
+          // Round to nearest tenth and add a padding of one tenth.
+          minimum: (min * 10).roundToDouble() / 10 - 0.1,
+          maximum: (max * 10).roundToDouble() / 10 + 0.1,
+        ),
+        series: <LineSeries<MapEntry<String, double>, String>>[
+          LineSeries<MapEntry<String, double>, String>(
+            name: '',
+            dataSource: lastValue!.series.entries.toList(),
+            xValueMapper: (entry, _) => entry.key,
+            yValueMapper: (entry, _) => entry.value,
+          ),
+        ],
+        enableAxisAnimation: true,
       );
     } else {
       chart = const Center(child: Text('Vyberte region ze seznamu vlevo'));
@@ -191,39 +203,12 @@ class DashboardRegionDetailsCard extends ConsumerWidget {
             title: 'korelujících ukazatelů',
             futureProvider: correlationsInRegionCountProvider(selectedRegion),
           ),
-          ListTile(
-            title: const Text('Zobrazit více'),
-            onTap: () {},
-            trailing: const Icon(
-              Icons.chevron_right,
-              // color: Theme.of(context).primaryColor,
-            ),
-            // textColor: Theme.of(context).primaryColor,
-          ),
-          // Text(
-          //   'Související ukazatele',
-          //   style: Theme.of(context).textTheme.headline5,
-          // ),
-          // SizedBox(height: CustomTheme.of(context).sizes.halfPaddingSize),
-          // for (final color in [
-          //   Colors.redAccent,
-          //   Colors.orangeAccent,
-          //   Colors.yellowAccent.shade400,
-          // ])
-          //   ListTile(
-          //     leading: Container(
-          //       width: CustomTheme.of(context).sizes.paddingSize,
-          //       height: CustomTheme.of(context).sizes.paddingSize,
-          //       decoration: BoxDecoration(
-          //         shape: BoxShape.circle,
-          //         color: color,
-          //       ),
-          //     ),
-          //     title: const Text('Ukazatel 1'),
+          // ListTile(
+          //   title: const Text('Zobrazit více'),
+          //   onTap: () {},
+          //   trailing: const Icon(
+          //     Icons.chevron_right,
           //   ),
-          // TextButton(
-          //   onPressed: () {},
-          //   child: const Text('Zobrazit další'),
           // ),
         ],
       ),
