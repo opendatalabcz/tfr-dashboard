@@ -280,8 +280,8 @@ class DatasetCard extends ConsumerWidget {
                     primaryXAxis: CategoryAxis(),
                     primaryYAxis: NumericAxis(
                       // Round to nearest tenth and add a padding of one tenth.
-                      minimum: min.roundToDouble() - padding,
-                      maximum: max.roundToDouble() + padding,
+                      minimum: min.floorToDouble() - padding,
+                      maximum: max.ceilToDouble() + padding,
                       numberFormat: NumberFormat.compact(locale: 'cs_CZ'),
                     ),
                     series: <LineSeries<MapEntry<String, double>, String>>[
