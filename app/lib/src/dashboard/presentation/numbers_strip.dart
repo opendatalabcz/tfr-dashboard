@@ -4,7 +4,6 @@ import 'package:tfr_dashboard/src/app/presentation/common.dart';
 import 'package:tfr_dashboard/src/data/data.dart';
 import 'package:tfr_dashboard/src/theming/theming.dart';
 
-// TODO: Implement from API.
 class NumbersStrip extends ConsumerWidget {
   const NumbersStrip({
     Key? key,
@@ -71,7 +70,6 @@ class NumbersStrip extends ConsumerWidget {
             title: 'Korelace',
           ),
         ),
-        // TODO: Pie chart of correlating sets vs. all sets?
       ],
     );
   }

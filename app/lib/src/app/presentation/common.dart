@@ -114,7 +114,7 @@ class SelectorCard<T> extends StatelessWidget {
     } else {
       return Card(
         child: Padding(
-          padding: CustomTheme.of(context).sizes.padding.copyWith(right: 8.0),
+          padding: CustomTheme.of(context).sizes.padding,
           child: Column(
             children: children,
           ),

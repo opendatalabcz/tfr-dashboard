@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tfr_dashboard/src/app/presentation/common.dart';
@@ -37,34 +38,31 @@ class Dashboard extends ConsumerWidget {
           children: [
             SizedBox(height: CustomTheme.of(context).sizes.halfPaddingSize),
             Padding(
-              padding: CustomTheme.of(context).sizes.halfPadding.copyWith(
-                    top: 0,
-                  ),
-              child: Row(
-                children: [
-                  Text(
-                    'Vývoj demografického ukazatele plodnosti  — ',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                  TextButton(
-                    child: Text(
-                      'Co je TFR?',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1!
-                          .copyWith(color: Theme.of(context).primaryColor),
+              padding: CustomTheme.of(context).sizes.halfPadding,
+              child: RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.subtitle1,
+                  children: [
+                    const TextSpan(
+                        text: 'Vývoj demografického ukazatele plodnosti — '),
+                    TextSpan(
+                      text: 'Co je TFR?',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const TextDialog(
+                              'Total fertility rate (TFR) či česky úhrnná plodnost je demografický ukazatel popisujı́cı́ počet dětı́, které by se ve sledované společnosti mohly narodit jedné ženě. Aby se počet obyvatel dlouhodobě udržel na stejné hodnotě, TFR by mělo dosahovat hodnoty odhadované pro rozvinuté země na 2,1.',
+                              title: 'Total fertility rate',
+                            ),
+                          );
+                        },
                     ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => const TextDialog(
-                          'Total fertility rate (TFR) či česky úhrnná plodnost je demografický ukazatel popisujı́cı́ počet dětı́, které by se ve sledované společnosti mohly narodit jedné ženě. Aby se počet obyvatel dlouhodobě udržel na stejné hodnotě, TFR by mělo dosahovat hodnoty odhadované pro rozvinuté země na 2,1.',
-                          title: 'Total fertility rate',
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const NumbersStrip(),
