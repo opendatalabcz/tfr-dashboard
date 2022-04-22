@@ -20,15 +20,15 @@ final ThemeData darkTheme = ThemeData(
   backgroundColor: customDarkColors.backgroundColor,
   scaffoldBackgroundColor: customDarkColors.backgroundColor,
   appBarTheme: AppBarTheme(
-    systemOverlayStyle: SystemUiOverlayStyle.dark,
+    systemOverlayStyle: SystemUiOverlayStyle.light,
     color: Colors.transparent,
-    elevation: 0,
+    elevation: 2.0,
     titleTextStyle: const TextStyle(
       color: Colors.white,
-      fontSize: 24,
+      fontSize: 32,
       fontWeight: FontWeight.w400,
     ),
-    iconTheme: IconThemeData(color: Colors.grey[200]),
+    iconTheme: IconThemeData(color: Colors.grey.shade200),
   ),
   cardTheme: cardTheme.copyWith(color: Colors.grey.shade800),
 );

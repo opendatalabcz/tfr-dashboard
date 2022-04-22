@@ -66,7 +66,19 @@ class DashboardRegionSelector extends ConsumerWidget {
 
     return SelectorCard<Region>(
       items: regions.maybeWhen(
-        data: (data) => data,
+        data: (data) {
+          data.sort((a, b) => a.name.compareTo(b.name));
+          // Put 'Whole world' and 'European Union' first.
+          try {
+            final wld = data.singleWhere((region) => region.id == 'wld');
+            final euu = data.singleWhere((region) => region.id == 'euu');
+            data.removeWhere(
+                (region) => region.id == 'wld' || region.id == 'euu');
+            data.insertAll(0, [wld, euu]);
+            // ignore: empty_catches
+          } on StateError {}
+          return data;
+        },
         orElse: () => [],
       ),
       isSelected: (region) => region.id == selectedRegionId,
@@ -89,26 +101,39 @@ class DashboardTfrChart extends ConsumerWidget {
     if (selectedRegion != null) {
       final series = ref.watch(timeSeriesProvider(
           TimeSeriesAddress(datasetId: 'tfr', regionId: selectedRegion)));
-      // chart = const Placeholder(fallbackHeight: 185, strokeWidth: 1);
 
       chart = series.when(
-        data: (data) => SfCartesianChart(
-          primaryXAxis: CategoryAxis(),
-          series: <LineSeries<MapEntry<String, double>, String>>[
-            LineSeries<MapEntry<String, double>, String>(
-              dataSource: data.series.entries.toList(),
-              xValueMapper: (entry, _) => entry.key,
-              yValueMapper: (entry, _) => entry.value,
+        data: (data) {
+          final sortedValues = data.series.values.toList();
+          sortedValues.sort();
+          final min = sortedValues.first;
+          final max = sortedValues.last;
+
+          return SfCartesianChart(
+            tooltipBehavior: TooltipBehavior(
+              enable: true,
+              decimalPlaces: 3,
+              activationMode: ActivationMode.singleTap,
+              animationDuration: 0,
+              duration: 0,
             ),
-          ],
-          enableAxisAnimation: true,
-          crosshairBehavior: CrosshairBehavior(
-            enable: true,
-            // shouldAlwaysShow: true,
-            activationMode: ActivationMode.singleTap,
-            lineWidth: 0.5,
-          ),
-        ),
+            primaryXAxis: CategoryAxis(),
+            primaryYAxis: NumericAxis(
+              // Round to nearest tenth and add a padding of one tenth.
+              minimum: (min * 10).roundToDouble() / 10 - 0.1,
+              maximum: (max * 10).roundToDouble() / 10 + 0.1,
+            ),
+            series: <LineSeries<MapEntry<String, double>, String>>[
+              LineSeries<MapEntry<String, double>, String>(
+                name: '',
+                dataSource: data.series.entries.toList(),
+                xValueMapper: (entry, _) => entry.key,
+                yValueMapper: (entry, _) => entry.value,
+              ),
+            ],
+            enableAxisAnimation: true,
+          );
+        },
         error: (_, __) => Container(),
         loading: () => Container(),
       );

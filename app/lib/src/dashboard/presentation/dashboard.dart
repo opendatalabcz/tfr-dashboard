@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tfr_dashboard/src/app/presentation/common.dart';
 
 import 'package:tfr_dashboard/src/config/config.dart';
 import 'package:tfr_dashboard/src/dashboard/presentation/data_sources.dart';
@@ -34,6 +35,7 @@ class Dashboard extends ConsumerWidget {
             ),
         child: ListView(
           children: [
+            SizedBox(height: CustomTheme.of(context).sizes.halfPaddingSize),
             Padding(
               padding: CustomTheme.of(context).sizes.halfPadding.copyWith(
                     top: 0,
@@ -63,6 +65,7 @@ class Dashboard extends ConsumerWidget {
             const NumbersStrip(),
             const RegionsDashboard(),
             const DataSources(),
+            const PageFooter(),
             SizedBox(height: CustomTheme.of(context).sizes.halfPaddingSize),
           ],
         ),

@@ -60,7 +60,8 @@ class DashboardSingleValueCard extends StatelessWidget {
           children: [
             Text(
               value,
-              style: Theme.of(context).textTheme.displaySmall,
+              style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                  color: Theme.of(context).primaryColor.withOpacity(0.8)),
             ),
             SizedBox(width: CustomTheme.of(context).sizes.paddingSize),
             Text(title),
