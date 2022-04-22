@@ -1,35 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tfr_dashboard/src/app/presentation/common.dart';
+import 'package:tfr_dashboard/src/data/data.dart';
 import 'package:tfr_dashboard/src/theming/theming.dart';
 
 // TODO: Implement from API.
-class NumbersStrip extends StatelessWidget {
+class NumbersStrip extends ConsumerWidget {
   const NumbersStrip({
     Key? key,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final regionsCountAsyncValue = ref.watch(regionsCountProvider);
+    final datasetsCountAsyncValue = ref.watch(datasetsCountProvider);
+    final timeSeriesCountAsyncValue = ref.watch(timeSeriesCountProvider);
+    final correlationsCountAsyncValue = ref.watch(correlationsCountProvider);
+
     return Wrap(
-      children: const [
+      children: [
         DashboardSingleValueCard(
           title: 'regionů',
-          value: '50',
+          value: regionsCountAsyncValue.maybeWhen(
+            data: (data) => data.toString(),
+            orElse: () => '?',
+          ),
+          dialog: const TextDialog(
+            'Aplikace zpřístupňuje data ze zemí Evropské unie a několika dalších geograficky a kulturně blízkých států, aby byly výsledky porovnatelné. Navíc je možné prohlédnout si evropský a celosvětový průměr.',
+            title: 'Regiony',
+          ),
         ),
         DashboardSingleValueCard(
           title: 'ukazatelů',
-          value: '64',
+          value: datasetsCountAsyncValue.maybeWhen(
+            data: (data) => data.toString(),
+            orElse: () => '?',
+          ),
+          dialog: const TextDialog(
+            'V online datových zdrojích byly nalezeny demografické, ekonomické a další ukazatele. Jedná se jednak o ukazatele, které mají prokázaný vliv na TFR, jednak o nové, dosud nezkoumané.',
+            title: 'Ukazatele',
+          ),
         ),
         DashboardSingleValueCard(
           title: 'časových řad',
-          value: '684',
+          value: timeSeriesCountAsyncValue.maybeWhen(
+            data: (data) => data.toString(),
+            orElse: () => '?',
+          ),
+          dialog: const TextDialog(
+            'Ukazatele, které aplikace nabízí, mají většinou dostupná data pro více zemí. Každý vývoj daného ukazatele v čase a určitém regionu tvoří jednu časovou řadu. Tu je možné porovnat s vývojem TFR ve stejném regionu či napříč regiony.',
+            title: 'Časové řady',
+          ),
         ),
-        DashboardSingleValueCard(
+        const DashboardSingleValueCard(
           title: 'pokrytí',
-          value: '1980-2020',
+          value: '1980-2022',
+          dialog: TextDialog(
+            'Data dostupná v aplikaci jsou omezena na dobu od roku 1980 - většina ukazatelů totiž není dostupná v dřívějších obdobích. Aplikace cílí zejména na 21. století, pro nějž je k dispozici nejvíce dat.',
+            title: 'Časové pokrytí',
+          ),
         ),
         DashboardSingleValueCard(
           title: 'korelací',
-          value: '92',
+          value: correlationsCountAsyncValue.maybeWhen(
+            data: (data) => data.toString(),
+            orElse: () => '?',
+          ),
+          dialog: const TextDialog(
+            'Aplikace umožňuje zobrazení ukazatelů, které korelují s TFR a mají tedy podobný průběh čase. Korelace však nemusí znamenat, že je mezi daným ukazatelem a TFR příčinná souvislost. S pomocí nalezených ukazatelů je také vypočítaná předpověď vývoje TFR.',
+            title: 'Korelace',
+          ),
         ),
         // TODO: Pie chart of correlating sets vs. all sets?
       ],
@@ -40,33 +80,40 @@ class NumbersStrip extends StatelessWidget {
 class DashboardSingleValueCard extends StatelessWidget {
   final String value;
   final String title;
+  final TextDialog? dialog;
 
   const DashboardSingleValueCard({
     Key? key,
     required this.value,
     required this.title,
+    this.dialog,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: CustomTheme.of(context).sizes.tilePadding,
-        child: Row(
-          // TODO: Remake with RichText.
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Text(
-              value,
-              style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  color: Theme.of(context).primaryColor.withOpacity(0.8)),
-            ),
-            SizedBox(width: CustomTheme.of(context).sizes.paddingSize),
-            Text(title),
-          ],
+      child: InkWell(
+        child: Padding(
+          padding: CustomTheme.of(context).sizes.tilePadding,
+          child: RichText(
+            text: TextSpan(children: [
+              TextSpan(
+                text: '$value ',
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                    color: Theme.of(context).primaryColor.withOpacity(0.8)),
+              ),
+              TextSpan(
+                text: title,
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            ]),
+          ),
         ),
+        onTap: dialog != null
+            ? () {
+                showDialog(context: context, builder: (_) => dialog!);
+              }
+            : null,
       ),
     );
   }

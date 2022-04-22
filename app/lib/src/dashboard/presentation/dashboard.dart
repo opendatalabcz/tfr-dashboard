@@ -56,7 +56,12 @@ class Dashboard extends ConsumerWidget {
                     ),
                     onPressed: () {
                       showDialog(
-                          context: context, builder: (_) => const TfrDialog());
+                        context: context,
+                        builder: (_) => const TextDialog(
+                          'Total fertility rate (TFR) či česky úhrnná plodnost je demografický ukazatel popisujı́cı́ počet dětı́, které by se ve sledované společnosti mohly narodit jedné ženě. Aby se počet obyvatel dlouhodobě udržel na stejné hodnotě, TFR by mělo dosahovat hodnoty odhadované pro rozvinuté země na 2,1.',
+                          title: 'Total fertility rate',
+                        ),
+                      );
                     },
                   ),
                 ],
@@ -70,31 +75,6 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class TfrDialog extends StatelessWidget {
-  const TfrDialog({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Total fertility rate'),
-      content: const SizedBox(
-        width: 500.0,
-        child: Text(
-            'Total fertility rate (TFR) či česky úhrnná plodnost je demografický ukazatel popisujı́cı́ počet dětı́, které by se ve sledované společnosti mohly narodit jedné ženě. Aby se počet obyvatel dlouhodobě udržel na stejné hodnotě, TFR by mělo dosahovat hodnoty odhadované pro rozvinuté země na 2,1.'),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Zavřít'),
-        ),
-      ],
-      // contentPadding: EdgeInsets.all(24),
     );
   }
 }

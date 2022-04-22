@@ -177,3 +177,34 @@ class PageFooter extends StatelessWidget {
     );
   }
 }
+
+class TextDialog extends StatelessWidget {
+  final String? title;
+  final String text;
+
+  const TextDialog(
+    this.text, {
+    this.title,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: title != null ? Text(title!) : null,
+      content: SizedBox(
+        width: 500.0,
+        child: Text(text),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Zavřít'),
+        ),
+      ],
+      // contentPadding: EdgeInsets.all(24),
+    );
+  }
+}

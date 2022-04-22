@@ -12,6 +12,10 @@ final regionsProvider = FutureProvider((ref) async {
   return await TfrApi.allRegions();
 });
 
+final regionsCountProvider = FutureProvider((ref) async {
+  return await TfrApi.regionsCount();
+});
+
 final correlationsInRegionCountProvider =
     FutureProvider.family((ref, String? regionId) async {
   if (regionId == null) {
@@ -73,6 +77,10 @@ final datasetsInDataSourceProvider =
   return await TfrApi.datasetsInDataSource(dataSourceId);
 });
 
+final datasetsCountProvider = FutureProvider((ref) async {
+  return await TfrApi.datasetsCount();
+});
+
 // Time series
 
 final timeSeriesProvider =
@@ -81,6 +89,14 @@ final timeSeriesProvider =
     throw const ArgumentException();
   }
   return await TfrApi.singleTimeSeries(address);
+});
+
+final timeSeriesCountProvider = FutureProvider((ref) async {
+  return await TfrApi.timeSeriesCount();
+});
+
+final correlationsCountProvider = FutureProvider((ref) async {
+  return await TfrApi.correlationsCount();
 });
 
 class ArgumentException implements Exception {

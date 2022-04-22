@@ -106,9 +106,25 @@ class TfrApi {
     }
   }
 
+  static Future<int> regionsCount() async {
+    try {
+      return await _getResultsCount(path: 'region');
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
   static Future<int> datasetsCount() async {
     try {
       return await _getResultsCount(path: 'dataset');
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
+  static Future<int> timeSeriesCount() async {
+    try {
+      return await _getResultsCount(path: 'time_series');
     } catch (_) {
       throw const ApiResponseException();
     }
@@ -120,6 +136,19 @@ class TfrApi {
         path: 'dataset',
         queryParameters: {
           'data_source': 'eq.$dataSourceId',
+        },
+      );
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
+  static Future<int> correlationsCount() async {
+    try {
+      return await _getResultsCount(
+        path: 'time_series',
+        queryParameters: {
+          'correlation': 'eq.true',
         },
       );
     } catch (_) {
