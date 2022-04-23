@@ -25,6 +25,8 @@ class TfrApi {
     }
   }
 
+  // All entities of a type.
+
   static Future<List<Region>> allRegions() async {
     try {
       final response = await _getResultsJson(path: 'region');
@@ -48,6 +50,8 @@ class TfrApi {
     }
   }
 
+  // Single entity of a type.
+
   static Future<Region> singleRegion(String regionId) async {
     final result = _regionCache[regionId];
     if (result != null) {
@@ -62,6 +66,26 @@ class TfrApi {
       );
       final result = Region.fromMap(response[0]);
       _regionCache.addAll({regionId: result});
+      return result;
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
+  static Future<Dataset> singleDataset(String datasetId) async {
+    final result = _datasetCache[datasetId];
+    if (result != null) {
+      return result;
+    }
+    try {
+      final response = await _getResultsJson(
+        path: 'dataset',
+        queryParameters: {
+          'id': 'eq.$datasetId',
+        },
+      );
+      final result = Dataset.fromMap(response[0]);
+      _datasetCache.addAll({datasetId: result});
       return result;
     } catch (_) {
       throw const ApiResponseException();
@@ -89,21 +113,28 @@ class TfrApi {
     }
   }
 
-  static Future<Dataset> singleDataset(String datasetId) async {
-    final result = _datasetCache[datasetId];
-    if (result != null) {
-      return result;
-    }
+  // Entity by foreign ID or IDs.
+
+  /// Get all regions the selected dataset has time series for.
+  static Future<List<Region>> regionsForDataset(String datasetId) async {
     try {
+      // Fetch time series for the dataset.
       final response = await _getResultsJson(
-        path: 'dataset',
+        path: 'time_series',
         queryParameters: {
-          'id': 'eq.$datasetId',
+          'dataset': 'eq.$datasetId',
         },
       );
-      final result = Dataset.fromMap(response[0]);
-      _datasetCache.addAll({datasetId: result});
-      return result;
+      final timeSeriesList =
+          (response as List).map((e) => TimeSeries.fromMap(e)).toList();
+      _timeSeriesCache.addEntries(timeSeriesList.map((e) => MapEntry(
+          TimeSeriesAddress(datasetId: e.datasetId, regionId: e.regionId), e)));
+      // Fetch regions by IDs.
+      final List<Region> regions = [];
+      for (final timeSeries in timeSeriesList) {
+        regions.add(await singleRegion(timeSeries.regionId));
+      }
+      return regions;
     } catch (_) {
       throw const ApiResponseException();
     }
@@ -125,6 +156,8 @@ class TfrApi {
       throw const ApiResponseException();
     }
   }
+
+  // Entity counts.
 
   static Future<int> regionsCount() async {
     try {

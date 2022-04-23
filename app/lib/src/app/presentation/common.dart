@@ -1,8 +1,27 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:tfr_dashboard/src/data/data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tfr_dashboard/src/theming/theming.dart';
+
+List<Region> sortedRegions(List<Region> regions) {
+  regions.sort((a, b) => a.name.compareTo(b.name));
+  // Put 'Whole world' and 'European Union' first if they are present.
+  try {
+    final euu = regions.singleWhere((region) => region.id == 'euu');
+    regions.removeWhere((region) => region.id == 'euu');
+    regions.insert(0, euu);
+    // ignore: empty_catches
+  } on StateError {}
+  try {
+    final wld = regions.singleWhere((region) => region.id == 'wld');
+    regions.removeWhere((region) => region.id == 'wld');
+    regions.insert(0, wld);
+    // ignore: empty_catches
+  } on StateError {}
+  return regions;
+}
 
 class SectionTitle extends StatelessWidget {
   final String title;

@@ -66,19 +66,7 @@ class DashboardRegionSelector extends ConsumerWidget {
 
     return SelectorCard<Region>(
       items: regions.maybeWhen(
-        data: (data) {
-          data.sort((a, b) => a.name.compareTo(b.name));
-          // Put 'Whole world' and 'European Union' first.
-          try {
-            final wld = data.singleWhere((region) => region.id == 'wld');
-            final euu = data.singleWhere((region) => region.id == 'euu');
-            data.removeWhere(
-                (region) => region.id == 'wld' || region.id == 'euu');
-            data.insertAll(0, [wld, euu]);
-            // ignore: empty_catches
-          } on StateError {}
-          return data;
-        },
+        data: (data) => sortedRegions(data),
         orElse: () => [],
       ),
       isSelected: (region) => region.id == selectedRegionId,

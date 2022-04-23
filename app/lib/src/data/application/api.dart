@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tfr_dashboard/src/data/application/app.dart';
 import 'package:tfr_dashboard/src/data/data.dart';
 import 'package:tfr_dashboard/src/data/infrastructure/api.dart';
 
@@ -14,6 +15,16 @@ final regionsProvider = FutureProvider((ref) async {
 
 final regionProvider = FutureProvider.family((ref, String regionId) async {
   return await TfrApi.singleRegion(regionId);
+});
+
+final regionsForSelectedDatasetProvider =
+    FutureProvider.autoDispose((ref) async {
+  final selectedDatasetId = ref.watch(selectedDatasetIdProvider);
+  if (selectedDatasetId != null) {
+    return await TfrApi.regionsForDataset(selectedDatasetId);
+  } else {
+    return <Region>[];
+  }
 });
 
 final regionsCountProvider = FutureProvider((ref) async {
@@ -64,6 +75,12 @@ final dataSourcesProvider = FutureProvider((ref) async {
 final dataSourceProvider = FutureProvider.family((ref, String id) async {
   final dataSources = await ref.watch(dataSourcesProvider.future);
   return dataSources.firstWhere((ds) => ds.id == id);
+});
+
+final dataSourceForDatasetProvider =
+    FutureProvider.family((ref, String datasetId) async {
+  final dataset = await TfrApi.singleDataset(datasetId);
+  return await ref.watch(dataSourceProvider(dataset.dataSourceId).future);
 });
 
 final datasetsInDataSourceCountProvider =
