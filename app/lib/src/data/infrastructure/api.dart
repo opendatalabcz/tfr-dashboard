@@ -140,6 +140,61 @@ class TfrApi {
     }
   }
 
+  /// Get all regions the selected dataset has correlating time series for.
+  static Future<List<Region>> correlatingRegionsForDataset(
+      String datasetId) async {
+    try {
+      // Fetch time series for the dataset.
+      final response = await _getResultsJson(
+        path: 'time_series',
+        queryParameters: {
+          'dataset': 'eq.$datasetId',
+          'correlation': 'eq.true',
+        },
+      );
+      final timeSeriesList =
+          (response as List).map((e) => TimeSeries.fromMap(e)).toList();
+      _timeSeriesCache.addEntries(timeSeriesList.map((e) => MapEntry(
+          TimeSeriesAddress(datasetId: e.datasetId, regionId: e.regionId), e)));
+      // Fetch regions by IDs.
+      final List<Region> regions = [];
+      for (final timeSeries in timeSeriesList) {
+        regions.add(await singleRegion(timeSeries.regionId));
+      }
+      return regions;
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
+  /// Get all regions the selected dataset does not have
+  /// correlating time series for.
+  static Future<List<Region>> nonCorrelatingRegionsForDataset(
+      String datasetId) async {
+    try {
+      // Fetch time series for the dataset.
+      final response = await _getResultsJson(
+        path: 'time_series',
+        queryParameters: {
+          'dataset': 'eq.$datasetId',
+          'correlation': 'eq.false',
+        },
+      );
+      final timeSeriesList =
+          (response as List).map((e) => TimeSeries.fromMap(e)).toList();
+      _timeSeriesCache.addEntries(timeSeriesList.map((e) => MapEntry(
+          TimeSeriesAddress(datasetId: e.datasetId, regionId: e.regionId), e)));
+      // Fetch regions by IDs.
+      final List<Region> regions = [];
+      for (final timeSeries in timeSeriesList) {
+        regions.add(await singleRegion(timeSeries.regionId));
+      }
+      return regions;
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
   static Future<List<Dataset>> datasetsInDataSource(String dataSourceId) async {
     try {
       final response = await _getResultsJson(

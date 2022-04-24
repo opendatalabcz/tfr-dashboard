@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-typedef DoubleSeries = LinkedHashMap<String, double>;
+typedef NumberSeries = LinkedHashMap<String, num>;
 typedef BoolSeries = LinkedHashMap<String, bool>;
 
 class Region {
@@ -69,9 +69,9 @@ class Dataset {
   final String url;
   final String unit;
 
-  final DoubleSeries pValuesPerYear;
-  final DoubleSeries rValuesPerYear;
-  final BoolSeries correlationValuesPerYear;
+  final NumberSeries? pValuesPerYear;
+  final NumberSeries? rValuesPerYear;
+  final BoolSeries? correlationValuesPerYear;
 
   const Dataset({
     required this.id,
@@ -93,10 +93,15 @@ class Dataset {
       description: map['description'] ?? '',
       url: map['url'] ?? '',
       unit: map['unit'] ?? '',
-      pValuesPerYear: DoubleSeries.from(map['p_values_per_year']),
-      rValuesPerYear: DoubleSeries.from(map['r_values_per_year']),
-      correlationValuesPerYear:
-          BoolSeries.from(map['correlation_values_per_year']),
+      pValuesPerYear: map['p_values_per_year'] != null
+          ? NumberSeries.from(map['p_values_per_year'])
+          : null,
+      rValuesPerYear: map['r_values_per_year'] != null
+          ? NumberSeries.from(map['r_values_per_year'])
+          : null,
+      correlationValuesPerYear: map['correlation_values_per_year'] != null
+          ? BoolSeries.from(map['correlation_values_per_year'])
+          : null,
     );
   }
 
@@ -127,23 +132,34 @@ class TimeSeriesAddress {
 
   @override
   int get hashCode => datasetId.hashCode ^ regionId.hashCode;
+
+  TimeSeriesAddress copyWith({
+    String? datasetId,
+    String? regionId,
+  }) {
+    return TimeSeriesAddress(
+      datasetId: datasetId ?? this.datasetId,
+      regionId: regionId ?? this.regionId,
+    );
+  }
 }
 
 class TimeSeries {
   final String datasetId;
   final String regionId;
 
-  final DoubleSeries series;
-  final int lag;
-  final double slope;
-  final double intercept;
-  final double rValue;
-  final double pValue;
-  final double stdErr;
+  final NumberSeries series;
+  final NumberSeries? processedSeries;
+  final int? lag;
+  final double? slope;
+  final double? intercept;
+  final double? rValue;
+  final double? pValue;
+  final double? stdErr;
   final bool correlation;
 
-  double get lastValue => series.isNotEmpty ? series.entries.last.value : 0;
-  double get difference => series.isNotEmpty
+  num get lastValue => series.isNotEmpty ? series.entries.last.value : 0;
+  num get difference => series.isNotEmpty
       ? series.entries.last.value - series.entries.first.value
       : 0;
 
@@ -151,6 +167,7 @@ class TimeSeries {
     required this.datasetId,
     required this.regionId,
     required this.series,
+    required this.processedSeries,
     required this.lag,
     required this.slope,
     required this.intercept,
@@ -164,13 +181,16 @@ class TimeSeries {
     return TimeSeries(
       datasetId: map['dataset'] ?? '',
       regionId: map['region'] ?? '',
-      series: DoubleSeries.from(map['series']),
+      series: NumberSeries.from(map['series']),
+      processedSeries: map['series'] != null
+          ? NumberSeries.from(map['processed_series'])
+          : null,
       lag: map['lag']?.toInt() ?? 0,
       slope: map['slope']?.toDouble() ?? 0.0,
       intercept: map['intercept']?.toDouble() ?? 0.0,
-      rValue: map['rValue']?.toDouble() ?? 0.0,
-      pValue: map['pValue']?.toDouble() ?? 0.0,
-      stdErr: map['stdErr']?.toDouble() ?? 0.0,
+      rValue: map['r_value']?.toDouble() ?? 0.0,
+      pValue: map['p_value']?.toDouble() ?? 0.0,
+      stdErr: map['std_err']?.toDouble() ?? 0.0,
       correlation: map['correlation'] ?? false,
     );
   }
