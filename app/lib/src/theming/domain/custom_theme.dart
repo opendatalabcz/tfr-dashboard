@@ -46,6 +46,11 @@ class CustomColors {
   final Color errorIconColor;
   final Color unknownIconColor;
 
+  // Charts.
+  final Color tfrColor;
+  final Color otherSeriesColor;
+  final Color correlationColor;
+
   const CustomColors({
     required this.primarySwatch,
     required this.primaryColor,
@@ -58,6 +63,9 @@ class CustomColors {
     required this.okayIconColor,
     required this.errorIconColor,
     required this.unknownIconColor,
+    required this.tfrColor,
+    required this.otherSeriesColor,
+    required this.correlationColor,
   });
 }
 
@@ -94,6 +102,9 @@ final customLightColors = CustomColors(
   okayIconColor: Colors.green,
   errorIconColor: Colors.redAccent,
   unknownIconColor: Colors.grey,
+  correlationColor: Colors.redAccent,
+  otherSeriesColor: Colors.orange,
+  tfrColor: Colors.blue,
 );
 
 final customDarkColors = CustomColors(
@@ -108,6 +119,9 @@ final customDarkColors = CustomColors(
   okayIconColor: Colors.green,
   errorIconColor: Colors.redAccent,
   unknownIconColor: Colors.grey,
+  correlationColor: Colors.redAccent,
+  otherSeriesColor: Colors.orange,
+  tfrColor: Colors.blue,
 );
 
 final customLightTheme = CustomThemeData(

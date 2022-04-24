@@ -29,8 +29,7 @@ class DataSourcePage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           dataSourceAsyncValue.maybeWhen(
-              data: (data) => 'Datový zdroj ${data.name}',
-              orElse: () => 'Datový zdroj'),
+              data: (data) => data.name, orElse: () => 'Datový zdroj'),
         ),
       ),
       body: Padding(
@@ -119,7 +118,10 @@ class Datasets extends ConsumerWidget {
       final datasetSelector = SelectorCard<Dataset>(
         isScrollable: false,
         items: datasetsAsyncValue.maybeWhen(
-          data: (data) => data,
+          data: (data) {
+            data.sort((a, b) => a.name.compareTo(b.name));
+            return data;
+          },
           orElse: () => [],
         ),
         isSelected: (dataset) => dataset.id == selectedDatasetId,
@@ -144,9 +146,12 @@ class Datasets extends ConsumerWidget {
                 ),
               )
             else
-              const Expanded(
-                child: Center(
-                  child: Text('Vyberte ukazatel ze seznamu'),
+              Expanded(
+                child: Padding(
+                  padding: CustomTheme.of(context).sizes.padding,
+                  child: const Center(
+                    child: Text('Vyberte ukazatel ze seznamu'),
+                  ),
                 ),
               ),
           ],
@@ -284,14 +289,15 @@ class DatasetCard extends ConsumerWidget {
                       maximum: max.ceilToDouble() + padding,
                       numberFormat: NumberFormat.compact(locale: 'cs_CZ'),
                     ),
-                    series: <LineSeries<MapEntry<String, double>, String>>[
-                      LineSeries<MapEntry<String, double>, String>(
+                    series: <LineSeries<MapEntry<String, num>, String>>[
+                      LineSeries<MapEntry<String, num>, String>(
                         name: '',
                         dataSource: data.series.entries.toList(),
                         xValueMapper: (entry, _) => entry.key,
                         yValueMapper: (entry, _) => entry.value,
                         animationDelay: 0,
                         animationDuration: 0,
+                        color: CustomTheme.of(context).colors.otherSeriesColor,
                       ),
                     ],
                     enableAxisAnimation: false,

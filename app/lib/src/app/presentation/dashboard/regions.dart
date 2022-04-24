@@ -127,12 +127,13 @@ class _DashboardTfrChartState extends ConsumerState<DashboardTfrChart> {
           minimum: (min * 10).roundToDouble() / 10 - 0.1,
           maximum: (max * 10).roundToDouble() / 10 + 0.1,
         ),
-        series: <LineSeries<MapEntry<String, double>, String>>[
-          LineSeries<MapEntry<String, double>, String>(
+        series: <LineSeries<MapEntry<String, num>, String>>[
+          LineSeries<MapEntry<String, num>, String>(
             name: '',
             dataSource: lastValue!.series.entries.toList(),
             xValueMapper: (entry, _) => entry.key,
             yValueMapper: (entry, _) => entry.value,
+            color: CustomTheme.of(context).colors.tfrColor,
           ),
         ],
         enableAxisAnimation: true,
