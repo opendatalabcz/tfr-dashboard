@@ -47,11 +47,16 @@ class TfrApp extends ConsumerWidget {
                       datasetId: uri.pathSegments[1],
                     )),
               );
+            case 'region':
+              return MaterialPageRoute(
+                builder: ((context) => RegionPage(
+                      regionId: uri.pathSegments[1],
+                    )),
+              );
             default:
               return home;
           }
         },
-        // home: const Dashboard(),
         debugShowCheckedModeBanner: false,
       ),
     );

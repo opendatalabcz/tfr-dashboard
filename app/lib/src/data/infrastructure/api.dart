@@ -212,6 +212,35 @@ class TfrApi {
     }
   }
 
+  static Future<List<Dataset>> correlatingDatasetsForRegion(
+      String regionId) async {
+    try {
+      final response = await _getResultsJson(
+        path: 'time_series',
+        queryParameters: {
+          'region': 'eq.$regionId',
+          'correlation': 'eq.true',
+        },
+      );
+      final timeSeriesList =
+          (response as List).map((e) => TimeSeries.fromMap(e)).toList();
+      _timeSeriesCache.addEntries(timeSeriesList.map((e) => MapEntry(
+          TimeSeriesAddress(
+            datasetId: e.datasetId,
+            regionId: e.regionId,
+          ),
+          e)));
+      // Fetch datasets by IDs.
+      final List<Dataset> datasets = [];
+      for (final timeSeries in timeSeriesList) {
+        datasets.add(await singleDataset(timeSeries.datasetId));
+      }
+      return datasets;
+    } catch (_) {
+      throw const ApiResponseException();
+    }
+  }
+
   // Entity counts.
 
   static Future<int> regionsCount() async {

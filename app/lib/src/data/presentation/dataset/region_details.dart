@@ -34,9 +34,9 @@ class RegionDetails extends ConsumerWidget {
           orElse: () => [],
         ),
         isSelected: (dataset) => dataset.id == selectedRegionId,
-        onSelected: (dataset) => ref
+        onSelected: (region) => ref
             .read(selectedRegionIdProviderOverride.notifier)
-            .update((state) => dataset.id),
+            .update((state) => region.id),
         titleSelector: (dataset) => dataset.name,
       );
       final address =

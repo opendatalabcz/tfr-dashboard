@@ -192,13 +192,15 @@ class DashboardRegionDetailsCard extends ConsumerWidget {
             title: 'korelujících ukazatelů',
             futureProvider: correlationsInRegionCountProvider(selectedRegion),
           ),
-          // ListTile(
-          //   title: const Text('Zobrazit více'),
-          //   onTap: () {},
-          //   trailing: const Icon(
-          //     Icons.chevron_right,
-          //   ),
-          // ),
+          ListTile(
+            title: const Text('Zobrazit ukazatele'),
+            onTap: () {
+              Navigator.of(context).pushNamed('/region/$selectedRegion');
+            },
+            trailing: const Icon(
+              Icons.chevron_right,
+            ),
+          ),
         ],
       ),
       // ),

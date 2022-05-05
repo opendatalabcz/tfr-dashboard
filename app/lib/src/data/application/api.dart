@@ -102,6 +102,11 @@ final datasetsInDataSourceProvider =
   return await TfrApi.datasetsInDataSource(dataSourceId);
 });
 
+final correlatingDatasetsForRegionProvider =
+    FutureProvider.family((ref, String regionId) async {
+  return await TfrApi.correlatingDatasetsForRegion(regionId);
+});
+
 final datasetsCountProvider = FutureProvider((ref) async {
   return await TfrApi.datasetsCount();
 });
