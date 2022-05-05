@@ -9,7 +9,9 @@ import 'package:tfr_dashboard/src/data/data.dart';
 class TfrApi {
   static final Uri _apiRoot = Uri.parse('http://127.0.0.1:5051/');
 
+  static const String forecastDataSourceId = 'forecast';
   static const String tfrDatasetId = 'tfr';
+  static const String tfrForecastDatasetId = 'tfr_forecast';
 
   static final Map<String, Region> _regionCache = {};
   static final Map<String, DataSource> _dataSourceCache = {};
@@ -43,6 +45,7 @@ class TfrApi {
       final response = await _getResultsJson(path: 'data_source');
       final results =
           (response as List).map((e) => DataSource.fromMap(e)).toList();
+      results.removeWhere((e) => e.id == forecastDataSourceId);
       _dataSourceCache.addEntries(results.map((e) => MapEntry(e.id, e)));
       return results;
     } catch (_) {

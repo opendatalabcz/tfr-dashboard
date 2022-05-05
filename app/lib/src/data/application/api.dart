@@ -71,6 +71,20 @@ final tfrDifferenceProvider =
   return timeSeries.difference;
 });
 
+final tfrForecastDifferenceProvider =
+    FutureProvider.family((ref, String? regionId) async {
+  if (regionId == null) {
+    return 0;
+  }
+
+  final timeSeries = await ref.watch(timeSeriesProvider(
+    TimeSeriesAddress(
+        datasetId: TfrApi.tfrForecastDatasetId, regionId: regionId),
+  ).future);
+
+  return timeSeries.difference;
+});
+
 // Data sources
 final dataSourcesProvider = FutureProvider((ref) async {
   return await TfrApi.allDataSources();
@@ -132,6 +146,22 @@ final timeSeriesInDatsetCountProvider =
 
 final correlationsCountProvider = FutureProvider((ref) async {
   return await TfrApi.correlationsCount();
+});
+
+final tfrForSelectedRegionProvider = FutureProvider((ref) async {
+  final region = ref.watch(selectedRegionIdProvider);
+  final series = await ref.watch(timeSeriesProvider(
+    TimeSeriesAddress(datasetId: TfrApi.tfrDatasetId, regionId: region),
+  ).future);
+  return series;
+});
+
+final tfrForecastForSelectedRegionProvider = FutureProvider((ref) async {
+  final region = ref.watch(selectedRegionIdProvider);
+  final series = await ref.watch(timeSeriesProvider(
+    TimeSeriesAddress(datasetId: TfrApi.tfrForecastDatasetId, regionId: region),
+  ).future);
+  return series;
 });
 
 class ArgumentException implements Exception {

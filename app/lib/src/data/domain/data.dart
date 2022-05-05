@@ -182,7 +182,7 @@ class TimeSeries {
       datasetId: map['dataset'] ?? '',
       regionId: map['region'] ?? '',
       series: NumberSeries.from(map['series']),
-      processedSeries: map['series'] != null
+      processedSeries: map['processed_series'] != null
           ? NumberSeries.from(map['processed_series'])
           : null,
       lag: map['lag']?.toInt() ?? 0,

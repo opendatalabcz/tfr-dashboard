@@ -1,9 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'package:tfr_dashboard/src/app/app.dart';
-import 'package:tfr_dashboard/src/data/application/app.dart';
 import 'package:tfr_dashboard/src/data/data.dart';
 import 'package:tfr_dashboard/src/theming/theming.dart';
 
@@ -21,7 +22,7 @@ class RegionsDashboard extends StatelessWidget {
             if (constraints.maxWidth >=
                 CustomTheme.of(context).sizes.widescreenThreshold) {
               return SizedBox(
-                height: 290,
+                height: 317,
                 child: Row(
                   children: const [
                     SizedBox(
@@ -42,8 +43,8 @@ class RegionsDashboard extends StatelessWidget {
               return Column(
                 children: const [
                   SizedBox(height: 290, child: DashboardRegionSelector()),
-                  SizedBox(height: 290, child: DashboardTfrChart()),
-                  SizedBox(height: 290, child: DashboardRegionDetailsCard())
+                  SizedBox(height: 300, child: DashboardTfrChart()),
+                  SizedBox(height: 317, child: DashboardRegionDetailsCard())
                 ],
               );
             }
@@ -78,14 +79,6 @@ class DashboardRegionSelector extends ConsumerWidget {
   }
 }
 
-final tfrForSelectedRegionProvider = FutureProvider((ref) async {
-  final region = ref.watch(selectedRegionIdProvider);
-  final series = await ref.watch(timeSeriesProvider(
-    TimeSeriesAddress(datasetId: 'tfr', regionId: region),
-  ).future);
-  return series;
-});
-
 class DashboardTfrChart extends ConsumerStatefulWidget {
   const DashboardTfrChart({Key? key}) : super(key: key);
 
@@ -94,24 +87,42 @@ class DashboardTfrChart extends ConsumerStatefulWidget {
 }
 
 class _DashboardTfrChartState extends ConsumerState<DashboardTfrChart> {
-  TimeSeries? lastValue;
+  TimeSeries? lastTfrValue;
+  TimeSeries? lastTfrForecastValue;
 
   @override
   Widget build(BuildContext context) {
-    final asyncValue = ref.watch(tfrForSelectedRegionProvider);
+    final tfrAsyncValue = ref.watch(tfrForSelectedRegionProvider);
+    final tfrForecastAsyncValue =
+        ref.watch(tfrForecastForSelectedRegionProvider);
 
-    final newValue = asyncValue.when(
+    final newTfrValue = tfrAsyncValue.when(
         data: ((data) => data), error: (_, __) => null, loading: () => null);
-    if (newValue != null) {
-      lastValue = newValue;
+    if (newTfrValue != null) {
+      lastTfrValue = newTfrValue;
+    }
+
+    final newTfrForecastValue = tfrForecastAsyncValue.when(
+        data: ((data) => data), error: (_, __) => null, loading: () => null);
+    if (newTfrForecastValue != null) {
+      lastTfrForecastValue = newTfrForecastValue;
     }
 
     final Widget chart;
-    if (lastValue != null) {
-      final sortedValues = lastValue!.series.values.toList();
-      sortedValues.sort();
-      final min = sortedValues.first;
-      final max = sortedValues.last;
+    if (lastTfrValue != null && lastTfrForecastValue != null) {
+      final sortedTfrValues = lastTfrValue!.series.values.toList();
+      sortedTfrValues.sort();
+      num minValue = sortedTfrValues.first;
+      num maxValue = sortedTfrValues.last;
+
+      final sortedTfrForecastValues =
+          lastTfrForecastValue!.series.values.toList();
+      sortedTfrForecastValues.sort();
+      minValue = min(minValue, sortedTfrForecastValues.first);
+      maxValue = max(maxValue, sortedTfrForecastValues.last);
+
+      final tfrConnectedList = lastTfrValue!.series.entries.toList();
+      tfrConnectedList.add(lastTfrForecastValue!.series.entries.first);
 
       chart = SfCartesianChart(
         tooltipBehavior: TooltipBehavior(
@@ -124,16 +135,23 @@ class _DashboardTfrChartState extends ConsumerState<DashboardTfrChart> {
         primaryXAxis: CategoryAxis(),
         primaryYAxis: NumericAxis(
           // Round to nearest tenth and add a padding of one tenth.
-          minimum: (min * 10).roundToDouble() / 10 - 0.1,
-          maximum: (max * 10).roundToDouble() / 10 + 0.1,
+          minimum: (minValue * 10).roundToDouble() / 10 - 0.1,
+          maximum: (maxValue * 10).roundToDouble() / 10 + 0.1,
         ),
         series: <LineSeries<MapEntry<String, num>, String>>[
           LineSeries<MapEntry<String, num>, String>(
-            name: '',
-            dataSource: lastValue!.series.entries.toList(),
+            name: 'Minulá hodnota',
+            dataSource: tfrConnectedList,
             xValueMapper: (entry, _) => entry.key,
             yValueMapper: (entry, _) => entry.value,
             color: CustomTheme.of(context).colors.tfrColor,
+          ),
+          LineSeries<MapEntry<String, num>, String>(
+            name: 'Předpověď',
+            dataSource: lastTfrForecastValue!.series.entries.toList(),
+            xValueMapper: (entry, _) => entry.key,
+            yValueMapper: (entry, _) => entry.value,
+            color: CustomTheme.of(context).colors.otherSeriesColor,
           ),
         ],
         enableAxisAnimation: true,
@@ -182,8 +200,15 @@ class DashboardRegionDetailsCard extends ConsumerWidget {
             fractionDigits: 2,
           ),
           NumberListTile(
-            title: 'změna za sledované období',
+            title: 'změna za minulé období',
             futureProvider: tfrDifferenceProvider(selectedRegion),
+            fractionDigits: 2,
+            positiveValueColor: CustomTheme.of(context).colors.okayIconColor,
+            negativeValueColor: CustomTheme.of(context).colors.errorIconColor,
+          ),
+          NumberListTile(
+            title: 'předpovídaná změna',
+            futureProvider: tfrForecastDifferenceProvider(selectedRegion),
             fractionDigits: 2,
             positiveValueColor: CustomTheme.of(context).colors.okayIconColor,
             negativeValueColor: CustomTheme.of(context).colors.errorIconColor,
