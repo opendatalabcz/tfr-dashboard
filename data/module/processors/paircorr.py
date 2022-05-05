@@ -48,8 +48,8 @@ def lag_interval(lagging: tuple[int, int], static: tuple[int, int], lag: int) \
 
 def best_lag(tfr: pd.Series, other: pd.Series, maxlags: int = 5) -> tuple:
     """Find the best correlation and regression of tfr and other time series
-    between -maxlags and maxlags. The correlation with the biggest absolute r-value is
-    considered the best.
+    between -maxlags and maxlags. The correlation with the lowest p-value is
+    considered the best, since it has the strongest explanatory power.
 
     Returns:
     - lag of the best correlation
@@ -90,19 +90,19 @@ def best_lag(tfr: pd.Series, other: pd.Series, maxlags: int = 5) -> tuple:
             relations[lag] = linregress(primary, secondary)
         else:
             pass
-    
+
     if len(relations) == 0:
         return (None, None, None, None, None, None)
 
-    max_r_value = 0
-    max_r_value_lag = None
+    min_p_value = 2
+    min_p_value_lag = None
     for lag, props in relations.items():
-        cur_r_value = abs(props[2])
-        if cur_r_value > max_r_value:
-            max_r_value = cur_r_value
-            max_r_value_lag = lag
-    
-    return (max_r_value_lag, ) + relations[max_r_value_lag]
+        cur_p_value = abs(props[3])
+        if cur_p_value < min_p_value:
+            min_p_value = cur_p_value
+            min_p_value_lag = lag
+
+    return (min_p_value_lag, ) + relations[min_p_value_lag]
 
 def process(storage: Storage):
     """Process time series in the storage"""

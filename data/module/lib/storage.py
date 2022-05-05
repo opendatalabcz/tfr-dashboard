@@ -47,7 +47,7 @@ class TimeSeries:
         self.r_value = props[3]
         self.p_value = props[4]
         self.std_err = props[5]
-        self.correlation = is_correlation(self.p_value, self.r_value)
+        self.correlation = is_correlation(self.p_value)
 
 class Dataset:
     """Dataset with its metadata and time series"""
