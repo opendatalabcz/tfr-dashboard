@@ -5,7 +5,7 @@ import os
 from lib.db import Connection
 from lib.storage import Storage, Region
 from collectors import worldbank, eurostat, datagovcz, googletrends
-from processors import intercorr, paircorr
+from processors import intercorr, paircorr, forecasting
 
 if __name__ == '__main__':
     storage = Storage()
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     print('- Inter-region correlation')
     intercorr.process(storage)
     print('- Forecasting')
-    # TODO: Implement.
+    forecasting.process(storage)
 
     # Save data
     print('Saving data')

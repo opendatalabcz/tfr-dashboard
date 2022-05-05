@@ -119,10 +119,10 @@ class Connection:
 
         if not self._time_series_exists(time_series):
             if time_series.lag is not None:
-                self.cur.execute(f"""INSERT INTO time_series (dataset, region, series,
+                self.cur.execute(f"""INSERT INTO time_series (dataset, region, series, processed_series,
                     lag, slope, intercept, r_value, p_value, std_err, correlation)
-                    VALUES ('{time_series.dataset.dataset_id}', '{time_series.region.region_id}', '{time_series.series.to_json()}', 
-                    '{time_series.lag}', '{time_series.slope}', '{time_series.intercept}', 
+                    VALUES ('{time_series.dataset.dataset_id}', '{time_series.region.region_id}', '{time_series.series.to_json()}',
+                    '{time_series.differenced.to_json()}', '{time_series.lag}', '{time_series.slope}', '{time_series.intercept}',
                     '{time_series.r_value}', '{time_series.p_value}',
                     '{time_series.std_err}', '{time_series.correlation}')""")
             else:
@@ -132,7 +132,8 @@ class Connection:
         else:
             if time_series.lag is not None:
                 self.cur.execute(f"""UPDATE time_series
-                    SET series = '{time_series.series.to_json()}', lag = '{time_series.lag}', slope = '{time_series.slope}',
+                    SET series = '{time_series.series.to_json()}', processed_series = '{time_series.differenced.to_json()}',
+                    lag = '{time_series.lag}', slope = '{time_series.slope}',
                     intercept = '{time_series.intercept}', r_value = '{time_series.r_value}',
                     p_value = '{time_series.p_value}', std_err = '{time_series.std_err}'
                     WHERE dataset = '{time_series.dataset.dataset_id}'

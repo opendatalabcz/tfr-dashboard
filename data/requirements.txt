@@ -3,3 +3,4 @@ psycopg2
 zipfile36
 pytrends
 scipy
+pmdarima

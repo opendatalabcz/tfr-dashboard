@@ -23,7 +23,7 @@ def process(storage: Storage):
                     results = linregress(series.index, series.values)
                     p_values[year] = results[3]
                     r_values[year] = results[2]
-                    correlations[year] = is_correlation(results[3], results[2])
+                    correlations[year] = is_correlation(results[3])
                 dataset.set_inter_region_correlation_p_values(p_values)
                 dataset.set_inter_region_correlation_r_values(r_values)
                 dataset.set_inter_region_correlations(correlations)
