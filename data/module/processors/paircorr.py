@@ -117,11 +117,8 @@ def process(storage: Storage):
                 if time_series.differenced.size == 0:
                     continue
 
-                # Normalization
-                time_series.normalized = (time_series.differenced - time_series.differenced.mean()) \
-                    / (time_series.differenced.max() - time_series.differenced.min())
-
                 # Correlation and regression
-                results = best_lag(storage.tfr_dataset.time_series[time_series.region].normalized, time_series.normalized)
+                results = best_lag(storage.tfr_dataset.time_series[time_series.region].differenced,
+                    time_series.differenced)
 
                 time_series.set_correlation_regression(results)
