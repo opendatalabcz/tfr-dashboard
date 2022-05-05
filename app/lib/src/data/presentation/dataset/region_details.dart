@@ -157,7 +157,7 @@ class TimeSeriesCard extends ConsumerWidget {
       error: (_, __) => Padding(
         padding: CustomTheme.of(context).sizes.padding,
         child: const Center(
-          child: Text('Vyberte region ze seznamu vlevo'),
+          child: Text('Vyberte region ze seznamu'),
         ),
       ),
     );

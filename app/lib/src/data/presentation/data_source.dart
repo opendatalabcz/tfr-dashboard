@@ -168,7 +168,7 @@ class Datasets extends ConsumerWidget {
               Padding(
                 padding: CustomTheme.of(context).sizes.padding,
                 child: const Center(
-                  child: Text('Vyberte ukazatel ze seznamu výše'),
+                  child: Text('Vyberte ukazatel ze seznamu'),
                 ),
               ),
           ],

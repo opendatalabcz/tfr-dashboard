@@ -205,39 +205,57 @@ class TimeSeriesCorrelationChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      // Trim series to the same interval.
-      final int seriesStart;
-      final int seriesEnd;
-      final int tfrStart;
-      final int tfrEnd;
+      // Trim series to the common (same length, relatively lagged) interval.
+      final int seriesStart = int.parse(series.processedSeries!.keys.first);
+      final int seriesEnd = int.parse(series.processedSeries!.keys.last);
+      final int tfrStart = int.parse(tfr.processedSeries!.keys.first);
+      final int tfrEnd = int.parse(tfr.processedSeries!.keys.last);
 
+      int seriesLaggedStart;
+      int seriesLaggedEnd;
+      int tfrLaggedStart;
+      int tfrLaggedEnd;
       if (series.lag! >= 0) {
-        seriesStart =
-            int.parse(series.processedSeries!.keys.first) + series.lag!;
-        seriesEnd = int.parse(series.processedSeries!.keys.last);
-        tfrStart = int.parse(tfr.processedSeries!.keys.first);
-        tfrEnd = int.parse(tfr.processedSeries!.keys.last) - series.lag!;
+        tfrLaggedStart = tfrStart;
+        seriesLaggedStart = tfrStart + series.lag!;
+        if (seriesLaggedStart < seriesStart) {
+          tfrLaggedStart += seriesStart - seriesLaggedStart;
+          seriesLaggedStart = seriesStart;
+        }
+        seriesLaggedEnd = seriesEnd;
+        tfrLaggedEnd = seriesEnd - series.lag!;
+        if (tfrLaggedEnd > tfrEnd) {
+          seriesLaggedEnd -= tfrLaggedEnd - tfrEnd;
+          tfrLaggedEnd = tfrEnd;
+        }
       } else {
-        seriesStart = int.parse(series.processedSeries!.keys.first);
-        seriesEnd =
-            int.parse(series.processedSeries!.keys.last) + series.lag! - 1;
-        tfrStart = int.parse(tfr.processedSeries!.keys.first) - series.lag!;
-        tfrEnd = int.parse(tfr.processedSeries!.keys.last);
+        seriesLaggedStart = seriesStart;
+        tfrLaggedStart = seriesStart - series.lag!;
+        if (tfrLaggedStart < tfrStart) {
+          seriesLaggedStart += tfrStart - tfrLaggedStart;
+          tfrLaggedStart = tfrStart;
+        }
+        tfrLaggedEnd = tfrEnd;
+        seriesLaggedEnd = tfrEnd + series.lag!;
+        if (seriesLaggedEnd > seriesEnd) {
+          tfrLaggedEnd -= seriesLaggedEnd - seriesEnd;
+          seriesLaggedEnd = seriesEnd;
+        }
       }
 
-      final commonStart = max(seriesStart, tfrStart);
-      final commonEnd = min(seriesEnd, tfrEnd);
-
-      if (commonStart >= commonEnd) throw 'Series does not overlap with TFR';
+      if (seriesLaggedStart >= seriesLaggedEnd ||
+          tfrLaggedStart >= tfrLaggedEnd) {
+        throw 'Series does not overlap with TFR';
+      }
 
       final trimmedSeries = Map.of(series.processedSeries!);
       trimmedSeries.removeWhere((key, value) =>
-          int.parse(key) < commonStart || int.parse(key) > commonEnd);
+          int.parse(key) < seriesLaggedStart ||
+          int.parse(key) > seriesLaggedEnd);
 
       final trimmedTfr = Map.of(tfr.processedSeries!);
       trimmedTfr.removeWhere((key, value) =>
-          int.parse(key) < commonStart - series.lag! ||
-          int.parse(key) > commonEnd - series.lag!);
+          int.parse(key) < tfrLaggedStart || int.parse(key) > tfrLaggedEnd);
 
       // Find min and max values to bound the axes.
       final sortedSeries = trimmedSeries.values.toList();
@@ -392,7 +410,7 @@ class TimeSeriesCorrelationChart extends StatelessWidget {
       );
     } catch (e) {
       // Series can't be plotted.
-      return Container();
+      return const Center(child: Text('Korelaci nelze zobrazit'));
     }
   }
 }
