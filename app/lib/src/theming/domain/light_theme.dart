@@ -22,14 +22,15 @@ final ThemeData lightTheme = ThemeData(
     color: customLightColors.accentColor,
   ),
   appBarTheme: AppBarTheme(
-      systemOverlayStyle: SystemUiOverlayStyle.dark,
-      color: Colors.transparent,
-      elevation: 0,
-      titleTextStyle: const TextStyle(
-        color: Colors.black87,
-        fontSize: 24,
-        fontWeight: FontWeight.w500,
-      ),
-      iconTheme: IconThemeData(color: Colors.grey[700])),
+    systemOverlayStyle: SystemUiOverlayStyle.dark,
+    color: Colors.grey.shade300,
+    elevation: 2.0,
+    titleTextStyle: TextStyle(
+      color: Colors.grey.shade800,
+      fontSize: 32,
+      fontWeight: FontWeight.w500,
+    ),
+    iconTheme: IconThemeData(color: Colors.grey.shade700),
+  ),
   cardTheme: cardTheme,
 );

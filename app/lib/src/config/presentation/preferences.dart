@@ -28,17 +28,17 @@ class _PreferencesPageState extends ConsumerState<PreferencesPage> {
     final themeMode = ref.watch(themeModeProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Preferences')),
+      appBar: AppBar(title: const Text('Nastavení')),
       body: ListView(
         children: [
           const ListTile(
             // leading: Icon(Icons.format_paint),
-            title: Text('Color scheme'),
+            title: Text('Barevné schéma'),
           ),
           RadioListTile<ThemeMode>(
             groupValue: themeMode,
             value: ThemeMode.system,
-            title: const Text('Follow system'),
+            title: const Text('Podle systému'),
             onChanged: (ThemeMode? value) {
               ref.read(preferencesProvider.notifier).setThemeMode(value!);
             },
@@ -46,7 +46,7 @@ class _PreferencesPageState extends ConsumerState<PreferencesPage> {
           RadioListTile<ThemeMode>(
             groupValue: themeMode,
             value: ThemeMode.light,
-            title: const Text('Light'),
+            title: const Text('Světlé'),
             onChanged: (ThemeMode? value) {
               ref.read(preferencesProvider.notifier).setThemeMode(value!);
             },
@@ -54,7 +54,7 @@ class _PreferencesPageState extends ConsumerState<PreferencesPage> {
           RadioListTile<ThemeMode>(
             groupValue: themeMode,
             value: ThemeMode.dark,
-            title: const Text('Dark'),
+            title: const Text('Tmavé'),
             onChanged: (ThemeMode? value) {
               ref.read(preferencesProvider.notifier).setThemeMode(value!);
             },

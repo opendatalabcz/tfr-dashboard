@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tfr_dashboard/src/data/data.dart';
 import 'package:tfr_dashboard/src/theming/theming.dart';
 
-import 'home.dart';
+import 'dashboard/dashboard.dart';
 
 class TfrApp extends ConsumerWidget {
   const TfrApp({Key? key}) : super(key: key);
@@ -13,8 +14,49 @@ class TfrApp extends ConsumerWidget {
 
     return CustomThemeProvider(
       child: MaterialApp(
+        title: 'TFR Dashboard',
         theme: themeData,
-        home: const HomePage(),
+        initialRoute: Dashboard.route,
+        routes: {
+          Dashboard.route: (_) => const Dashboard(),
+        },
+        onGenerateRoute: (settings) {
+          final home =
+              MaterialPageRoute(builder: ((context) => const Dashboard()));
+
+          // Go home if route unknown.
+          if (settings.name == null) {
+            return home;
+          }
+
+          // Handle two-level parameterized routes.
+          final uri = Uri.parse(settings.name!);
+          if (uri.pathSegments.length != 2) {
+            return home;
+          }
+          switch (uri.pathSegments[0]) {
+            case 'data-source':
+              return MaterialPageRoute(
+                builder: ((context) => DataSourcePage(
+                      dataSourceId: uri.pathSegments[1],
+                    )),
+              );
+            case 'dataset':
+              return MaterialPageRoute(
+                builder: ((context) => DatasetPage(
+                      datasetId: uri.pathSegments[1],
+                    )),
+              );
+            case 'region':
+              return MaterialPageRoute(
+                builder: ((context) => RegionPage(
+                      regionId: uri.pathSegments[1],
+                    )),
+              );
+            default:
+              return home;
+          }
+        },
         debugShowCheckedModeBanner: false,
       ),
     );
