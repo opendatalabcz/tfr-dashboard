@@ -70,6 +70,16 @@ services:
       POSTGRES_USER: ${POSTGRES_USER?Postgres username}
       POSTGRES_DB: ${POSTGRES_DB?Postgres DB name}
 
+  web:
+    build:
+      context: app
+      args:
+        - API_URL=http://127.0.0.1:5051
+    depends_on:
+      - api
+    ports:
+      - "5053:8080"
+
 networks:
   backend:
     driver: bridge
