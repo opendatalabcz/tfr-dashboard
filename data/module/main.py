@@ -75,3 +75,5 @@ if __name__ == '__main__':
     print('Saving data')
     connection = Connection()
     connection.save_storage(storage)
+
+    print('Data collection and processing completed')
