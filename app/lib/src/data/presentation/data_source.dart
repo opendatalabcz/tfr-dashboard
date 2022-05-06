@@ -246,7 +246,7 @@ class DatasetCard extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.insights),
             title: Text(timeSeriesCountAsyncValue.maybeWhen(
-              data: (data) => 'Dostupné časové řady pro $data regionů',
+              data: (data) => 'Dostupné časové řady pro $data států',
               orElse: () => 'Jednotka',
             )),
           ),
@@ -258,7 +258,7 @@ class DatasetCard extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.poll),
-            title: const Text('Vývoj ve zvoleném regionu'),
+            title: const Text('Vývoj ve zvoleném státě'),
             subtitle: selectedRegionAsyncValue.maybeWhen(
                 data: (data) => Text(data.name), orElse: () => null),
           ),
@@ -304,14 +304,14 @@ class DatasetCard extends ConsumerWidget {
                   );
                 },
                 error: (_, __) => const Center(
-                  child: Text('Vývoj pro zvolený region není dostupný'),
+                  child: Text('Vývoj pro zvolený stát není dostupný'),
                 ),
                 loading: () => Container(),
               ),
             ),
           ),
           ListTile(
-            title: const Text('Zobrazit detaily a ostatní regiony'),
+            title: const Text('Zobrazit detaily a ostatní státy'),
             onTap: () {
               Navigator.pushNamed(context, '/dataset/$datasetId');
             },

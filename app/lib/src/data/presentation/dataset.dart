@@ -103,10 +103,10 @@ class DatasetPage extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SectionTitle(title: 'Korelace napříč regiony'),
+              const SectionTitle(title: 'Korelace napříč státy'),
               InterRegionDetailsCard(datasetId: datasetId),
               const SectionTitle(
-                  title: 'Nalezené korelace v jednotlivých regionech'),
+                  title: 'Nalezené korelace v jednotlivých státech'),
               Expanded(
                   child: RegionDetails(
                 datasetId: datasetId,
@@ -114,7 +114,7 @@ class DatasetPage extends ConsumerWidget {
                 selectedRegionIdProviderOverride:
                     selectedCorrelatingRegionIdProvider,
               )),
-              const SectionTitle(title: 'Regiony bez korelace'),
+              const SectionTitle(title: 'Státy bez korelace'),
               Expanded(
                   child: RegionDetails(
                 datasetId: datasetId,

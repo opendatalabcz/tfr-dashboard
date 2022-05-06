@@ -157,7 +157,7 @@ class TimeSeriesCard extends ConsumerWidget {
       error: (_, __) => Padding(
         padding: CustomTheme.of(context).sizes.padding,
         child: const Center(
-          child: Text('Vyberte region ze seznamu'),
+          child: Text('Vyberte stát ze seznamu'),
         ),
       ),
     );
@@ -204,7 +204,7 @@ class TimeSeriesCard extends ConsumerWidget {
             .tilePadding
             .copyWith(top: 0, bottom: 0),
         child: const Text(
-            'Při ověřování korelace se hledá souvislost nejen mezi dvojicemi hodnot pro každý rok, ale časové řady se také zkouší vzájemně posouvat v čase. Při kladném zpoždění TFR na změnu hodnoty ukazatele reaguje opožděně. Pokud je naopak zpoždění záporné, změny v TFR předchází změnám ve sledovaném ukazateli.'),
+            'Při ověřování korelace se hledá souvislost nejen mezi dvojicemi hodnot pro každý rok, ale časové řady se také zkouší vzájemně posouvat v čase. Při kladném zpoždění reaguje TFR na změnu hodnoty ukazatele opožděně. Pokud je naopak zpoždění záporné, změny v TFR předchází změnám ve sledovaném ukazateli.'),
       ),
       ListTile(
         title: RichText(
@@ -231,7 +231,7 @@ class TimeSeriesCard extends ConsumerWidget {
             .tilePadding
             .copyWith(top: 0, bottom: 0),
         child: const Text(
-            'Pearsonův korelační koeficient vyjadřuje míru podobnosti dvou náhodných vektorů, v tomto případě časových řad o stejné délce a frekvenci. Aby byla korelace potvrzena, prvním kritériem je korelační koeficient v absolutní hodnotě větší nebo roven 0.4.'),
+            'Pearsonův korelační koeficient vyjadřuje míru podobnosti dvou náhodných vektorů, v tomto případě časových řad o stejné délce a frekvenci. Pokud je kladný, vyšší hodnota ukazatele souvisí s vyšší hodnotou TFR. Je-li záporný, pak vyšší hodnota ukazatele znamená nižší TFR. Čím je hodnota dál od nuly, tím je korelace silnější.'),
       ),
       ListTile(
         title: RichText(
@@ -309,7 +309,7 @@ class TimeSeriesCard extends ConsumerWidget {
       Padding(
         padding: CustomTheme.of(context).sizes.tilePadding.copyWith(top: 0),
         child: const Text(
-            'Druhým kritériem pro ověření korelace je statistický test nenulovosti sklonu regresní přímky. Pokud je p hodnota dostatečně nízká, pak s ((1 - p) * 100)% jistotou zamítáme hypotézu, že přímka má nulový sklon a mezi sledovaným ukazatelem a TFR není lineární závislost.'),
+            'Kritériem pro ověření statistické významnosti tvrzení o korelaci je statistický test nenulovosti sklonu regresní přímky. Pokud je p hodnota dostatečně nízká, pak s ((1 - p) * 100)% jistotou zamítáme hypotézu, že přímka má nulový sklon a mezi sledovaným ukazatelem a TFR není lineární závislost.'),
       ),
     ];
   }

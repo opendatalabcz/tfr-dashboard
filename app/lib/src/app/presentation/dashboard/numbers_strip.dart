@@ -19,14 +19,14 @@ class NumbersStrip extends ConsumerWidget {
     return Wrap(
       children: [
         DashboardSingleValueCard(
-          title: 'regionů',
+          title: 'oblastí',
           value: regionsCountAsyncValue.maybeWhen(
             data: (data) => data.toString(),
             orElse: () => '?',
           ),
           dialog: const TextDialog(
             'Aplikace zpřístupňuje data ze zemí Evropské unie a několika dalších geograficky a kulturně blízkých států, aby byly výsledky porovnatelné. Navíc je možné prohlédnout si evropský a celosvětový průměr.',
-            title: 'Regiony',
+            title: 'Oblasti',
           ),
         ),
         DashboardSingleValueCard(
@@ -47,7 +47,7 @@ class NumbersStrip extends ConsumerWidget {
             orElse: () => '?',
           ),
           dialog: const TextDialog(
-            'Ukazatele, které aplikace nabízí, mají většinou dostupná data pro více zemí. Každý vývoj daného ukazatele v čase a určitém regionu tvoří jednu časovou řadu. Tu je možné porovnat s vývojem TFR ve stejném regionu či napříč regiony.',
+            'Ukazatele, které aplikace nabízí, mají většinou dostupná data pro více zemí. Každý vývoj daného ukazatele v čase a určitém státě tvoří jednu časovou řadu. Tu je možné porovnat s vývojem TFR ve stejném státě či napříč státy.',
             title: 'Časové řady',
           ),
         ),
@@ -66,7 +66,7 @@ class NumbersStrip extends ConsumerWidget {
             orElse: () => '?',
           ),
           dialog: const TextDialog(
-            'Aplikace umožňuje zobrazení ukazatelů, které korelují s TFR a mají tedy podobný průběh čase. Korelace však nemusí znamenat, že je mezi daným ukazatelem a TFR příčinná souvislost. S pomocí nalezených ukazatelů je také vypočítaná předpověď vývoje TFR.',
+            'Aplikace umožňuje zobrazení ukazatelů, které korelují s TFR a mají tedy podobný průběh čase. Korelace však nemusí znamenat, že je mezi daným ukazatelem a TFR příčinná souvislost.',
             title: 'Korelace',
           ),
         ),

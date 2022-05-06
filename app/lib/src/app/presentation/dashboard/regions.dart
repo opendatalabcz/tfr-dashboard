@@ -16,7 +16,7 @@ class RegionsDashboard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionTitle(title: 'Regiony'),
+        const SectionTitle(title: 'Vývoj podle státu'),
         LayoutBuilder(
           builder: (context, constraints) {
             if (constraints.maxWidth >=

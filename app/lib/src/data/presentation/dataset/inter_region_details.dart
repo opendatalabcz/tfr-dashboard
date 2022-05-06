@@ -36,7 +36,7 @@ class InterRegionDetailsCard extends ConsumerWidget {
                       .tilePadding
                       .copyWith(top: 0),
                   child: const Text(
-                    'Graf popisuje vztah mezi hodnotami ukazatele a hodnotami TFR v každém roce napříč regiony. Korelace byla nalezena v těch časových úsecích, kde je plocha grafu podbarvená. Není-li graf podbarvený nikde, korelace ukazatele a TFR napříč regiony nalezena nebyla.',
+                    'Graf popisuje vztah mezi hodnotami ukazatele a hodnotami TFR v každém roce napříč státy. Korelace byla nalezena v těch časových úsecích, kde je plocha grafu podbarvená. Není-li graf podbarvený nikde, korelace ukazatele a TFR napříč státy nalezena nebyla.',
                   ),
                 ),
                 Padding(
@@ -45,7 +45,7 @@ class InterRegionDetailsCard extends ConsumerWidget {
                       .tilePadding
                       .copyWith(top: 0, bottom: 0),
                   child: const Text(
-                    'Pokud je hodnota korelačního koeficientu kladná, pak platí, že v regionech, kde má ukazatel vysokou hodnotu, je vysoké i TFR (pozitivní korelace). Je-li ale korelační koeficient záporný, pak v regionech, kde má ukazatel vysokou hodnotu, je naopak TFR nízké (negativní korelace).',
+                    'Pokud je hodnota korelačního koeficientu kladná, pak platí, že v zemích, kde má ukazatel vysokou hodnotu, je vysoké i TFR (pozitivní korelace). Je-li korelační koeficient záporný, pak v zemích, kde má ukazatel vysokou hodnotu, je naopak TFR nízké (negativní korelace). Síla korelace závisí na hodnotě korelačního koeficientu, čím dál je od nuly, tím je korelace silnější.',
                   ),
                 ),
                 Padding(
@@ -56,7 +56,7 @@ class InterRegionDetailsCard extends ConsumerWidget {
                       showDialog(
                         context: context,
                         builder: (_) => const TextDialog(
-                          'Pro oveření korelace se používá jednak pearsonův korelační koeficient, jednak p hodnota statistického testu nenulovosti sklonu regresní přímky. Korelace platí, pokud je korelační koeficient dostatečně daleko od nuly (v absolutní hodnotě alespoň 0.4) a zároveň je p hodnota testu nižší než 0.05 (zamítáme na 95% hladině hypotézu, že regresní přímka má nulový sklon).',
+                          'Pro oveření korelace se používá p hodnota statistického testu nenulovosti sklonu regresní přímky. Pokud je p hodnota nižší než 0.05 (zamítáme na 95% hladině hypotézu, že regresní přímka má nulový sklon), pak považujeme lineární závislost mezi hodnotami za potvrzenou. Sílu korelace a její znaménko pak zjistíme z hodnoty korelačního koeficientu.',
                           title: 'Metoda výpočtu korelace',
                         ),
                       );
@@ -70,7 +70,7 @@ class InterRegionDetailsCard extends ConsumerWidget {
           return Padding(
             padding: CustomTheme.of(context).sizes.padding,
             child: Text(
-              'Korelace napříč regiony není dostupná, protože ukazatel nemá hodnoty v dostatečném počtu regionů.',
+              'Korelace napříč státy není dostupná, protože ukazatel nemá hodnoty v dostatečném počtu států.',
               style: Theme.of(context).textTheme.subtitle1,
             ),
           );
