@@ -7,7 +7,12 @@ import 'package:tfr_dashboard/src/data/data.dart';
 /// mapped to DTOs.
 /// Supports partial response caching.
 class TfrApi {
-  static final Uri _apiRoot = Uri.parse('http://127.0.0.1:5051/');
+  static final Uri _apiRoot = Uri.parse(
+    const String.fromEnvironment(
+      'API_ROOT',
+      defaultValue: 'http://127.0.0.1:5051/',
+    ),
+  );
 
   static const String forecastDataSourceId = 'forecast';
   static const String tfrDatasetId = 'tfr';
