@@ -107,21 +107,19 @@ class DatasetPage extends ConsumerWidget {
               InterRegionDetailsCard(datasetId: datasetId),
               const SectionTitle(
                   title: 'Nalezené korelace v jednotlivých státech'),
-              Expanded(
-                  child: RegionDetails(
+              RegionDetails(
                 datasetId: datasetId,
                 regionsProvider: correlatingRegionsForDatasetProvider,
                 selectedRegionIdProviderOverride:
                     selectedCorrelatingRegionIdProvider,
-              )),
+              ),
               const SectionTitle(title: 'Státy bez korelace'),
-              Expanded(
-                  child: RegionDetails(
+              RegionDetails(
                 datasetId: datasetId,
                 regionsProvider: nonCorrelatingRegionsForDatasetProvider,
                 selectedRegionIdProviderOverride:
                     selectedNonCorrelatingRegionIdProvider,
-              )),
+              ),
               const PageFooter(),
               SizedBox(height: CustomTheme.of(context).sizes.halfPaddingSize),
             ],
