@@ -204,7 +204,7 @@ class TimeSeriesCard extends ConsumerWidget {
             .tilePadding
             .copyWith(top: 0, bottom: 0),
         child: const Text(
-            'Při ověřování korelace se hledá souvislost nejen mezi dvojicemi hodnot pro každý rok, ale časové řady se také zkouší vzájemně posouvat v čase. Při kladném zpoždění reaguje TFR na změnu hodnoty ukazatele opožděně. Pokud je naopak zpoždění záporné, změny v TFR předchází změnám ve sledovaném ukazateli.'),
+            'Při ověřování korelace se hledá souvislost nejen mezi dvojicemi hodnot pro každý rok, ale časové řady se také zkouší vzájemně posouvat v čase. Při kladném zpoždění reaguje TFR na změnu hodnoty ukazatele opožděně. Pokud je naopak zpoždění záporné, změny v TFR předchází změnám ve sledovaném ukazateli. Vybráno je to zpoždění, pro nějž je korelační koeficient nejvyšší.'),
       ),
       ListTile(
         title: RichText(

@@ -207,7 +207,7 @@ class DashboardRegionDetailsCard extends ConsumerWidget {
             negativeValueColor: CustomTheme.of(context).colors.errorIconColor,
           ),
           NumberListTile(
-            title: 'předpovídaná změna',
+            title: 'předpokládaná změna',
             futureProvider: tfrForecastDifferenceProvider(selectedRegion),
             fractionDigits: 2,
             positiveValueColor: CustomTheme.of(context).colors.okayIconColor,
