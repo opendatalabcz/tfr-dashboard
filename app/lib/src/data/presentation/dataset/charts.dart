@@ -274,6 +274,14 @@ class TimeSeriesCorrelationChart extends StatelessWidget {
       final minTfrAxisValue = (minTfrValue * 10).floorToDouble() / 10;
       final maxTfrAxisValue = (maxTfrValue * 10).ceilToDouble() / 10;
 
+      final regressionPoints = <Point>[];
+      for (int i = 0; i < trimmedTfr.values.length; i++) {
+        regressionPoints.add(Point(
+          trimmedTfr.values.elementAt(i),
+          trimmedSeries.values.elementAt(i),
+        ));
+      }
+
       // Create series for the differenced time series chart.
       final tfrChartSeries = LineSeries<MapEntry<String, num>, String>(
         name: 'TFR',
@@ -381,14 +389,11 @@ class TimeSeriesCorrelationChart extends StatelessWidget {
                 numberFormat: NumberFormat.compact(locale: 'cs_CZ'),
               ),
               series: <ChartSeries<dynamic, dynamic>>[
-                ScatterSeries<MapEntry<num, num>, num>(
+                ScatterSeries<Point, num>(
                   name: 'Ukazatel',
-                  dataSource:
-                      Map.fromIterables(trimmedTfr.values, trimmedSeries.values)
-                          .entries
-                          .toList(),
-                  xValueMapper: (entry, _) => entry.key,
-                  yValueMapper: (entry, _) => entry.value,
+                  dataSource: regressionPoints,
+                  xValueMapper: (point, _) => point.x,
+                  yValueMapper: (point, _) => point.y,
                   animationDelay: 0,
                   animationDuration: 0,
                   color: CustomTheme.of(context).colors.tfrColor,
