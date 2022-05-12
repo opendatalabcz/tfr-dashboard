@@ -148,7 +148,7 @@ class DataSource:
         self.datasets[dataset.dataset_id] = dataset
 
 class Storage:
-    """Manages gathered data, provides it to statistics engine and handles persistence"""
+    """Manages gathered data for providing it to the statistics engine and persistence module"""
 
     def __init__(self):
         self.regions: dict[str, Region] = {}

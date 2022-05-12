@@ -2,7 +2,6 @@
 
 import datetime
 
-import pandas as pd
 import world_bank_data as wb
 
 from lib import utils
@@ -15,25 +14,25 @@ datasets = {
     'SP.DYN.TFRT.IN': {
         'id': 'tfr',
         'name': 'Total fertility rate',
-        'description': 'Počet dětí, které by žena mohla mít, kdyby po celý její život platily hodnoty plodnosti podle věku pro daný rok.',
+        'description': 'Počet dětí, které by žena mohla mít, kdyby po celý její život platily hodnoty plodnosti podle věku pro daný rok. Korelace plodnosti se sebou samým je z principu dokonalá.',
         'unit': 'počet dětí'
     },
     'EN.ATM.CO2E.KT': {
         'id': 'co2_emissions',
         'name': 'Emise CO2',
-        'description': 'Emise CO2 vzniklé spalování fosilních paliv a výrobou cementu.',
+        'description': 'Emise CO2 vzniklé spalováním fosilních paliv a výrobou cementu',
         'unit': 'kt'
     },
     'FR.INR.DPST': {
         'id': 'deposit_interest_rate',
         'name': 'Úrok z vkladu',
-        'description': 'Úrok z vkladu komerčních bank podle MMF.',
+        'description': 'Úrok z vkladu komerčních bank podle MMF',
         'unit': '%'
     },
     'NY.GDP.PCAP.PP.CD': {
         'id': 'gdp',
         'name': 'HDP per capita',
-        'description': 'HDP per capita v mezinárodních dolarech podle parity kupní síly',
+        'description': 'HDP per capita v mezinárodních dolarech podle parity kupní síly. Předpokládá se negativní korelace na základě asociace růstu vývoje ekonomiky a poklesu plodnosti.',
         'unit': 'mezinárodní dolary'
     },
     'FP.CPI.TOTL.ZG': {
@@ -45,37 +44,37 @@ datasets = {
     'SL.TLF.ACTI.1524.FE.ZS': {
         'id': 'lfp_young_female',
         'name': 'Participace žen 15-24 let v pracovním procesu',
-        'description': 'Podíl ekonomicky aktivních žen ve věku 15-24 (odhad ILOSTAT)',
+        'description': 'Podíl ekonomicky aktivních žen ve věku 15-24 (odhad ILOSTAT). Nepředpokládá se jednoznačná korelace vzhledem k existujícímu výzkumu. Negativní asociace by však mohla být vysvětlena tím, že výchova dětí se negativně projevuje ušlým ziskem za dobu, kterou žena tráví péčí o novorozence.',
         'unit': '%'
     },
     'SL.TLF.ACTI.1524.MA.ZS': {
         'id': 'lfp_young_male',
         'name': 'Participace mužů 15-24 let v pracovním procesu',
-        'description': 'Podíl ekonomicky aktivních mužů ve věku 15-24 (odhad ILOSTAT)',
+        'description': 'Podíl ekonomicky aktivních mužů ve věku 15-24 (odhad ILOSTAT). Přepokládá se pozitivní korelace, protože zaměstnanost mužů se považuje za prokázaný faktor ovlivňující příznivě plodnost. Příjem mužů totiž není závislý na pauze v zaměstnání v těhotenství a po porodu jako v případě žen. Čím lépe je tak stabilně rodina zajištěna, tím vyšší se očekává počet potomků.',
         'unit': '%'
     },
     'SL.TLF.ACTI.1524.ZS': {
         'id': 'lfp_young',
         'name': 'Participace osob 15-24 let v pracovním procesu',
-        'description': 'Podíl ekonomicky aktivních osob ve věku 15-24 (odhad ILOSTAT)',
+        'description': 'Podíl ekonomicky aktivních osob ve věku 15-24 (odhad ILOSTAT). Předpokládá se spíše pozitivní korelace vzhledem k lepší schopnosti investovat do rodičovství při stabilním příjmu.',
         'unit': '%'
     },
     'SL.TLF.CACT.FE.ZS': {
         'id': 'lfp_female',
         'name': 'Participace žen 15+ v pracovním procesu',
-        'description': 'Podíl ekonomicky aktivních žen ve věku 15 a více let (odhad ILOSTAT)',
+        'description': 'Podíl ekonomicky aktivních žen ve věku 15 a více let (odhad ILOSTAT). Nepředpokládá se jednoznačná korelace vzhledem k existujícímu výzkumu. Negativní asociace by však mohla být vysvětlena tím, že výchova dětí se negativně projevuje ušlým ziskem za dobu, kterou žena tráví péčí o novorozence.',
         'unit': '%'
     },
     'SL.TLF.CACT.MA.ZS': {
         'id': 'lfp_male',
         'name': 'Participace mužů 15+ v pracovním procesu',
-        'description': 'Podíl ekonomicky aktivních mužů ve věku 15 a více let (odhad ILOSTAT)',
+        'description': 'Podíl ekonomicky aktivních mužů ve věku 15 a více let (odhad ILOSTAT). Přepokládá se pozitivní korelace, protože zaměstnanost mužů se považuje za prokázaný faktor ovlivňující příznivě plodnost. Příjem mužů totiž není závislý na pauze v zaměstnání v těhotenství a po porodu jako v případě žen. Čím lépe je tak stabilně rodina zajištěna, tím vyšší se očekává počet potomků.',
         'unit': '%'
     },
     'SL.TLF.CACT.ZS': {
         'id': 'lfp',
         'name': 'Participace osob 15+ v pracovním procesu',
-        'description': 'Podíl ekonomicky aktivních osob ve věku 15 a více let (odhad ILOSTAT)',
+        'description': 'Podíl ekonomicky aktivních osob ve věku 15 a více let (odhad ILOSTAT). Předpokládá se spíše pozitivní korelace vzhledem k lepší schopnosti investovat do rodičovství při stabilním příjmu.',
         'unit': '%'
     },
     'SG.GEN.PARL.ZS': {
@@ -86,7 +85,7 @@ datasets = {
     },
     'SL.TLF.CACT.FM.ZS': {
         'id': 'lfp_female_to_male',
-        'name': 'Poměr participace žen vůči mužům v pracovním procesu',
+        'name': 'Poměr participace žen vůči mužům v pracovním procesu. Předpokládá se negativní korelace, výchova dětí se může negativně projevovat ušlým ziskem za dobu, kterou žena tráví péčí o novorozence. Mužské zaměstnání touto pauzou vynucenou rodičovstvím není ovlivněno.',
         'description': 'Podíl partiticipace žen a mužů vyjádřený v procentech (odhad ILOSTAT)',
         'unit': '%'
     },
@@ -176,7 +175,6 @@ def collect(storage: Storage):
                     data_source,
                     dataset,
                     storage.regions[region.lower()],
-                    # pd.Series(data=data.values.copy(), index=data.index.copy(), name=str(dataset_id)))
                     data)
                 dataset.add_time_series(time_series)
 

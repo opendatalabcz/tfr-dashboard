@@ -14,103 +14,103 @@ UNIT = 'frekvence vyhledávání'
 datasets = {
     '/m/01cnz': {
         'id': 'birth_control',
-        'name': 'Antikoncepce - Téma',
-        'description': 'Birth control - Topic'
+        'name': 'Antikoncepce',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s antikoncepcí'
     },
     '/m/0fw7r': {
         'id': 'ivf',
-        'name': 'Umělé oplodnění - Téma',
-        'description': 'IVF - Topic'
+        'name': 'Umělé oplodnění',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s umělým oplodněním'
     },
     '/m/0g54wr7': {
         'id': 'abortion',
-        'name': 'Potrat - Téma',
-        'description': 'Abortion - Topic'
+        'name': 'Potrat',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s potratem'
     },
     '/m/01t751': {
         'id': 'pregnancy_test',
-        'name': 'Těhotenský test - Téma',
-        'description': 'Pregnancy test - Topic'
+        'name': 'Těhotenský test',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s těhotenskými testy'
     },
     '/m/05vqh7': {
         'id': 'pregnancy',
-        'name': 'Těhotenství - Téma',
-        'description': 'Pregnancy - Topic'
+        'name': 'Těhotenství',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s těhotenstvím'
     },
     '/m/0lc0w': {
         'id': 'childbirth',
-        'name': 'Porod - Téma',
-        'description': 'Childbirth - Topic'
+        'name': 'Porod',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s porodem'
     },
     '/m/0jnvp': {
         'id': 'infant',
-        'name': 'Kojenec - Téma',
-        'description': 'Infant - Topic'
+        'name': 'Kojenec',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s kojenci'
     },
     '/m/05_5p_d': {
         'id': 'maternity_hospital',
-        'name': 'Porodnice - Téma',
-        'description': 'Maternity hospital - Topic'
+        'name': 'Porodnice',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s porodnicí'
     },
     '/m/04fb_1': {
         'id': 'babysitting',
-        'name': 'Hlídání dětí - Téma',
-        'description': 'Babysitting - Topic',
+        'name': 'Hlídání dětí',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s hlídáním dětí',
     },
     '/m/0218w_': {
         'id': 'child_benefit',
-        'name': 'Rodičovský příspěvek - Téma',
-        'description': 'Child benefit - Topic'
+        'name': 'Rodičovský příspěvek',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s rodičovskými příspěvky'
     },
     '/m/01ft5b': {
         'id': 'kindergarten',
-        'name': 'Mateřská škola - Téma',
-        'description': 'Kindergarten - Topic'
+        'name': 'Mateřská škola',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s mateřskou školou'
     },
     '/m/03137q': {
         'id': 'parental_leave',
-        'name': 'Rodičovská dovolená - Téma',
-        'description': 'Parental leave - Topic'
+        'name': 'Rodičovská dovolená',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s rodičovskou dovolenou'
     },
     '/g/12233csl': {
         'id': 'stroller',
-        'name': 'Kočárek - Téma',
-        'description': 'Stroller - Topic'
+        'name': 'Kočárek',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s tématem kočárku'
     },
     '/m/01fqc_': {
         'id': 'baby_bottle',
-        'name': 'Kojenecká láhev - Téma',
-        'description': 'Baby bottle - Topic'
+        'name': 'Kojenecká láhev',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s tématem kojenecké lahve'
     },
     '/m/04ztj': {
         'id': 'marriage',
-        'name': 'Svatba - Téma',
-        'description': 'Marriage - Topic'
+        'name': 'Svatba',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících se svatbou'
     },
     '/m/0b03h': {
         'id': 'divorce',
-        'name': 'Rozvod - Téma',
-        'description': 'Divorce - Topic'
+        'name': 'Rozvod',
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s rozvodem'
     },
     '/m/0dfm1w': {
         'id': 'mortgage_calculator',
         'name': 'Hypoteční kalkulačka - Téma',
-        'description': 'Mortgage calculator - Topic'
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s tématem hypoteční kalkulačky'
     },
     '/m/0218w7': {
         'id': 'unemployment_benefits',
         'name': 'Podpora v nezaměstnanosti - Téma',
-        'description': 'Unemployment benefits - Topic'
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s podporou v nezaměstnanosti'
     },
     '/m/02wcrb': {
         'id': 'termination_of_employment',
         'name': 'Výpověď ze zaměstnání - Téma',
-        'description': 'Termination of employment - Topic'
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících s výpovědí ze zaměstnání'
     },
     '/m/012lyw': {
         'id': 'stress',
         'name': 'Stres - Téma',
-        'description': 'Stress - Topic'
+        'description': 'Frekvence vyhledávání klíčových slov souvisejících se stresem'
     }
 }
 
@@ -184,7 +184,7 @@ def collect(storage: Storage):
     data_source = DataSource(
         'google_trends',
         'Google Trends',
-        'Historie vyhledávání na Google',
+        'Historie vyhledávání na Google. Ukazatele ve formě témat sdružují související termíny a klíčová slova. Témata se týkají mateřství, sňatku, péče o dítě a ekonomických souvislostí s rodičovstvím.',
         'https://trends.google.com/')
 
 

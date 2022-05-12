@@ -52,7 +52,7 @@ datasets = {
         {
             'id': 'first_marriages_women',
             'name': 'První sňatky žen',
-            'description': 'Počet poprvé se vdávajících žen',
+            'description': 'Počet poprvé se vdávajících žen. Předpokládá se pozitivní korelace, protože nová manželství obvykle ústí v narození potomka.',
             'unit': 'počet sňatků',
             'filter': {
                 'sex': 'F',
@@ -62,7 +62,7 @@ datasets = {
         {
             'id': 'first_marriages_men',
             'name': 'První sňatky mužů',
-            'description': 'Počet poprvé se ženících mužů',
+            'description': 'Počet poprvé se ženících mužů. Předpokládá se pozitivní korelace, protože nová manželství obvykle ústí v narození potomka.',
             'unit': 'počet sňatků',
             'filter': {
                 'sex': 'M',
@@ -94,7 +94,7 @@ datasets = {
         {
             'id': 'education_expenditure',
             'name': 'Státní výdaje na vzdělávání',
-            'description': 'Výdaje na vzdelávání od předškolní do vysokoškolské úrovně',
+            'description': 'Výdaje na vzdelávání od předškolní do vysokoškolské úrovně. Vzhledem k dosavadnímu výzkumu se nepředpokládá výrazná korelace.',
             'unit': '% HDP',
             'filter': {
                 'isced11': 'ED02-8'
@@ -105,7 +105,7 @@ datasets = {
         {
             'id': 'social_benefits_health',
             'name': 'Výdaje na zdravotní péči',
-            'description': 'Podíl státních výdajů na zdravotní péči v porovnání se všemi sociálními výdaji',
+            'description': 'Podíl státních výdajů na zdravotní péči v porovnání se všemi sociálními výdaji. Vzhledem k dosavadnímu výzkumu se předpokládá spíše negativní korelace. Sociální výdaje kromě těch přímo podporujících rodiny s dětmi totiž vykazují negativní korelaci.',
             'unit': '%',
             'filter': {
                 'spdeps': 'SICK'
@@ -114,7 +114,7 @@ datasets = {
         {
             'id': 'social_benefits_old_age',
             'name': 'Výdaje na starobní důchody',
-            'description': 'Podíl státních výdajů na starobní důchody v porovnání se všemi sociálními výdaji',
+            'description': 'Podíl státních výdajů na starobní důchody v porovnání se všemi sociálními výdaji. Předpokládá se negativní korelace, protože starobní důchody (většina z objemu důchodů) jsou považovány za náhradu výchovy dětí za účelem zajištění ve stáří. Když proto začne stát poskytovat starobní důchod, jedinci nemají důvod vychovávat děti proto, aby si zajistili péči ve stáří.',
             'unit': '%',
             'filter': {
                 'spdeps': 'OLD'
@@ -123,7 +123,7 @@ datasets = {
         {
             'id': 'social_benefits_family',
             'name': 'Výdaje na podporu rodin',
-            'description': 'Podíl státních výdajů na podporu rodin v porovnání se všemi sociálními výdaji',
+            'description': 'Podíl státních výdajů na podporu rodin v porovnání se všemi sociálními výdaji. Přepokládá se pozitivní korelace, protože státní výdaje na podporu rodin jsou považovány za jediný druh sociálních výdajů s pozitivním vlivem na plodnost.',
             'unit': '%',
             'filter': {
                 'spdeps': 'FAM'
@@ -132,7 +132,7 @@ datasets = {
         {
             'id': 'social_benefits_unemployment',
             'name': 'Výdaje na podporu v nezaměstnanosti',
-            'description': 'Podíl státních výdajů na podporu v nezaměstnanosti v porovnání se všemi sociálními výdaji',
+            'description': 'Podíl státních výdajů na podporu v nezaměstnanosti v porovnání se všemi sociálními výdaji. Vzhledem k dosavadnímu výzkumu se předpokládá spíše negativní korelace. Sociální výdaje kromě těch přímo podporujících rodiny s dětmi totiž vykazují negativní korelaci.',
             'unit': '%',
             'filter': {
                 'spdeps': 'UNEMPLOY'
@@ -143,7 +143,7 @@ datasets = {
         {
             'id': 'age_when_leaving_parents_men',
             'name': 'Průměrný věk osamostatnění potomků - mužů',
-            'description': 'Odhadovaný průměrný věk, kdy mladí dospělí opouštějí rodičovskou domácnost',
+            'description': 'Odhadovaný průměrný věk, kdy mladí dospělí opouštějí rodičovskou domácnost. Předpokládá se pozitivní korelace, protože čím dříve mladý jedinec založí vlastní domácnost, tím vyšší je pravděpodobnost, že nebude žít sám a stane se rodičem.',
             'unit': 'věk',
             'filter': {
                 'sex': 'M',
@@ -152,7 +152,7 @@ datasets = {
         {
             'id': 'age_when_leaving_parents_women',
             'name': 'Průměrný věk osamostatnění potomků - žen',
-            'description': 'Odhadovaný průměrný věk, kdy mladí dospělí opouštějí rodičovskou domácnost',
+            'description': 'Odhadovaný průměrný věk, kdy mladí dospělí opouštějí rodičovskou domácnost. Předpokládá se pozitivní korelace, protože čím dříve mladý jedinec založí vlastní domácnost, tím vyšší je pravděpodobnost, že nebude žít sám a stane se rodičem.',
             'unit': 'věk',
             'filter': {
                 'sex': 'F',

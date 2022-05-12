@@ -43,7 +43,7 @@ def collect(storage: Storage):
         'pensions_count',
         data_source,
         'Počet důchodů',
-        'Počet všech typů důchodů vyplacených za rok',
+        'Počet všech typů důchodů vyplacených za rok. Předpokládá se negativní korelace, protože starobní důchody (většina z objemu důchodů) jsou považovány za náhradu výchovy dětí za účelem zajištění ve stáří. Když proto začne stát poskytovat starobní důchod, jedinci nemají důvod vychovávat děti proto, aby si zajistili péči ve stáří.',
         'https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2F00006963%2F4ca9223c497b1ee13011611498c3155f',
         'počet důchodů',
         )
@@ -70,7 +70,7 @@ def collect(storage: Storage):
         'classrooms_count',
         data_source,
         'Počet tříd',
-        'Počet tříd mateřských a základních škol',
+        'Počet tříd mateřských a základních škol. Předpokládá se pozitivní korelace se zpožděním, protože nově narozené je třeba v určitém věku umístit do škol.',
         'https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2F00025593%2F4b1efc67d6113e657b5332ede85d32fc',
         'počet tříd')
     dataset.add_time_series(TimeSeries(data_source, dataset, region, data))
@@ -90,7 +90,7 @@ def collect(storage: Storage):
         'apartments',
         data_source,
         'Dokončené byty',
-        'Počet dokončených bytů včetně bytů v rodinných domcích a bytových domech',
+        'Počet dokončených bytů včetně bytů v rodinných domcích a bytových domech. Přepokládá se pozitivní korelace, protože nová výstavba může souviset s mladými partnery, kteří zakládají rodinu.',
         'https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2F00025593%2F5aecb836332131bd6ce0a75fbbf23fb5',
         'počet bytů')
     dataset.add_time_series(TimeSeries(data_source, dataset, region, data))
@@ -118,7 +118,7 @@ def collect(storage: Storage):
         'unemployment_men',
         data_source,
         'Míra nezaměstnanosti mužů',
-        'Nezaměstnaní podle výsledků výběrového šetření pracovních sil',
+        'Nezaměstnaní podle výsledků výběrového šetření pracovních sil. Přepokládá se negativní korelace, protože zaměstnanost mužů se považuje za prokázaný faktor ovlivňující příznivě plodnost.',
         'https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2F00025593%2Ff35dda6e266c29b4572b295306d93991',
         'podíl nezaměstnaných')
     dataset.add_time_series(TimeSeries(data_source, dataset, region, data_men))
@@ -129,7 +129,7 @@ def collect(storage: Storage):
         'unemployment_women',
         data_source,
         'Míra nezaměstnanosti žen',
-        'Nezaměstnaní podle výsledků výběrového šetření pracovních sil',
+        'Nezaměstnaní podle výsledků výběrového šetření pracovních sil. Nepředpokládá se jednoznačná korelace vzhledem k existujícímu výzkumu. Negativní asociace by však mohla být vysvětlena tím, že výchova dětí se negativně projevuje ušlým ziskem za dobu, kterou žena tráví péčí o novorozence.',
         'https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2F00025593%2Ff35dda6e266c29b4572b295306d93991',
         'podíl nezaměstnaných')
     dataset.add_time_series(TimeSeries(data_source, dataset, region, data_women))
@@ -161,7 +161,7 @@ def collect(storage: Storage):
         'wages_men',
         data_source,
         'Medián mezd mužů',
-        'Medián měsíčních mezd mužů',
+        'Medián měsíčních mezd mužů. Předpokládá se pozitivní korelace, protože příjem mužů není závislý na pauze v zaměstnání v těhotenství a po porodu jako v případě žen. Čím lépe je tak stabilně rodina zajištěna, tím vyšší se očekává počet potomků.',
         'https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2F00025593%2F6be519cff8c390ae9003292b6c56c9ca',
         'Kč')
     dataset.add_time_series(TimeSeries(data_source, dataset, region, data_men))
@@ -172,7 +172,7 @@ def collect(storage: Storage):
         'wages_women',
         data_source,
         'Medián mezd žen',
-        'Medián měsíčních mezd žen',
+        'Medián měsíčních mezd žen. Nepředpokládá se jednoznačná korelace vzhledem k existujícímu výzkumu. Negativní asociace by však mohla být vysvětlena tím, že výchova dětí se negativně projevuje ušlým ziskem za dobu, kterou žena tráví péčí o novorozence.',
         'https://data.gov.cz/datov%C3%A1-sada?iri=https%3A%2F%2Fdata.gov.cz%2Fzdroj%2Fdatov%C3%A9-sady%2F00025593%2F6be519cff8c390ae9003292b6c56c9ca',
         'Kč')
     dataset.add_time_series(TimeSeries(data_source, dataset, region, data_women))
